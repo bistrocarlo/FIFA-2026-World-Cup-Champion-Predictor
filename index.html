@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 2026 World Cup Winner Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 30%, #c0392b, #6e1d12),
+                        radial-gradient(circle at 90% 70%, #1e5a7a, #0a2f44),
+                        repeating-linear-gradient(45deg, rgba(255,215,0,0.15) 0px, rgba(255,215,0,0.15) 2px, transparent 2px, transparent 12px);
+            background-blend-mode: overlay;
+            background-attachment: fixed;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFE484, #FFB347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            border-bottom: 2px solid rgba(255,215,0,0.5);
+            padding-bottom: 16px;
+        }
+
+        button {
+            background: #f39c12;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: #e67e22;
+            transform: scale(1.02);
+        }
+
+        .reset-btn {
+            background: #2c3e66;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .group-card {
+            background: rgba(15, 20, 40, 0.85);
+            border-radius: 28px;
+            padding: 18px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .group-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #FFD966;
+            border-left: 6px solid #f1c40f;
+            padding-left: 12px;
+            margin-bottom: 16px;
+        }
+
+        .match {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 40px;
+        }
+
+        .match input {
+            width: 60px;
+            padding: 6px;
+            text-align: center;
+            background: #1e1f2c;
+            border: 1px solid #f1c40f;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            font-size: 0.75rem;
+            border-collapse: collapse;
+            margin-top: 12px;
+            color: #f0f0f0;
+        }
+
+        th, td {
+            padding: 6px 4px;
+            text-align: left;
+        }
+
+        .qualified {
+            background: rgba(46, 204, 113, 0.25);
+            font-weight: bold;
+        }
+
+        .third-box {
+            background: rgba(0,0,0,0.5);
+            border-radius: 24px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .bracket {
+            background: rgba(0,0,0,0.5);
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .round {
+            margin: 20px 0 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+
+        .ko-match {
+            background: #0f1222cc;
+            border-radius: 20px;
+            padding: 10px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ko-score {
+            width: 60px;
+            background: #2a2c3b;
+            border: 1px solid #f1c40f;
+            border-radius: 20px;
+            padding: 5px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .champion {
+            background: gold;
+            color: #1e2a3a;
+            padding: 12px;
+            text-align: center;
+            border-radius: 40px;
+            font-weight: 800;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏆 2026 FIFA World Cup · Winner Predictor</h1>
+        <div>
+            <button id="refreshBtn">⟳ Refresh Standings & Bracket</button>
+            <button id="resetGroupsBtn" class="reset-btn">🔄 Reset All Group Scores</button>
+        </div>
+    </div>
+
+    <div id="groupsArea" class="grid"></div>
+    <div id="thirdArea" class="third-box"></div>
+    <div id="bracketArea" class="bracket"></div>
+</div>
+
+<script>
+    // ---------- OFFICIAL GROUPS ----------
+    const GROUPS = {
+        A: ["Mexico", "South Africa", "South Korea", "Czechia"],
+        B: ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
+        C: ["Brazil", "Morocco", "Haiti", "Scotland"],
+        D: ["United States", "Paraguay", "Australia", "Turkey"],
+        E: ["Germany", "Curacao", "Ivory Coast", "Ecuador"],
+        F: ["Netherlands", "Japan", "Sweden", "Tunisia"],
+        G: ["Belgium", "Egypt", "Iran", "New Zealand"],
+        H: ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"],
+        I: ["France", "Senegal", "Iraq", "Norway"],
+        J: ["Argentina", "Algeria", "Austria", "Jordan"],
+        K: ["Portugal", "DR Congo", "Uzbekistan", "Colombia"],
+        L: ["England", "Croatia", "Ghana", "Panama"]
+    };
+    const GROUP_KEYS = Object.keys(GROUPS);
+
+    // Store all match scores (0-0 initially)
+    let matchScores = {};
+
+    // Knockout data
+    let knockout = { round32: [], round16: [], quarter: [], semi: [], final: null };
+
+    // -------- INITIALIZE SCORES ----------
+    function initScores() {
+        for (let g of GROUP_KEYS) {
+            let teams = GROUPS[g];
+            let matches = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = i+1; j < 4; j++) {
+                    matches.push({ home: i, away: j, hScore: 0, aScore: 0 });
+                }
+            }
+            matchScores[g] = matches;
+        }
+    }
+    initScores();
+
+    // -------- COMPUTE STANDINGS (points, GF, GA, GD) ----------
+    function computeStandings() {
+        let standings = {};
+        for (let g of GROUP_KEYS) {
+            let teams = GROUPS[g];
+            let stats = teams.map((t, idx) => ({ team: t, idx, pts: 0, gf: 0, ga: 0, gd: 0 }));
+            for (let m of matchScores[g]) {
+                let home = stats[m.home];
+                let away = stats[m.away];
+                let hs = m.hScore, as = m.aScore;
+                home.gf += hs; home.ga += as;
+                away.gf += as; away.ga += hs;
+                if (hs > as) home.pts += 3;
+                else if (as > hs) away.pts += 3;
+                else { home.pts += 1; away.pts += 1; }
+            }
+            for (let s of stats) s.gd = s.gf - s.ga;
+            stats.sort((a,b) => {
+                if (a.pts !== b.pts) return b.pts - a.pts;
+                if (a.gd !== b.gd) return b.gd - a.gd;
+                return b.gf - a.gf;
+            });
+            standings[g] = stats;
+        }
+        return standings;
+    }
+
+    // -------- GET QUALIFIED (top2 + best 8 third) ----------
+    function getQualified(standings) {
+        let thirdList = [];
+        for (let g of GROUP_KEYS) {
+            let st = standings[g];
+            if (st && st[2]) thirdList.push({ ...st[2], group: g });
+        }
+        thirdList.sort((a,b) => {
+            if (a.pts !== b.pts) return b.pts - a.pts;
+            if (a.gd !== b.gd) return b.gd - a.gd;
+            return b.gf - a.gf;
+        });
+        let best8 = thirdList.slice(0,8);
+        let bestGroups = new Set(best8.map(t => t.group));
+        let qualified = [];
+        for (let g of GROUP_KEYS) {
+            let st = standings[g];
+            qualified.push({ ...st[0], group: g, rank: 1 });
+            qualified.push({ ...st[1], group: g, rank: 2 });
+            if (bestGroups.has(g)) qualified.push({ ...st[2], group: g, rank: 3 });
+        }
+        qualified.sort((a,b) => {
+            if (a.pts !== b.pts) return b.pts - a.pts;
+            if (a.gd !== b.gd) return b.gd - a.gd;
+            return b.gf - a.gf;
+        });
+        return { qualified, bestThird: best8 };
+    }
+
+    // -------- BUILD KNOCKOUT (seed 1 vs 32, etc) ----------
+    function buildKnockout(qualifiedArray) {
+        if (qualifiedArray.length !== 32) return null;
+        let r32 = [];
+        for (let i = 0; i < 16; i++) {
+            let t1 = qualifiedArray[i];
+            let t2 = qualifiedArray[31 - i];
+            r32.push({
+                team1: { name: t1.team, group: t1.group, score: 0 },
+                team2: { name: t2.team, group: t2.group, score: 0 }
+            });
+        }
+        let r16 = Array(8).fill().map(() => ({ team1: null, team2: null, score1: 0, score2: 0 }));
+        let qf = Array(4).fill().map(() => ({ team1: null, team2: null, score1: 0, score2: 0 }));
+        let sf = Array(2).fill().map(() => ({ team1: null, team2: null, score1: 0, score2: 0 }));
+        let final = { team1: null, team2: null, score1: 0, score2: 0 };
+        return { round32: r32, round16: r16, quarter: qf, semi: sf, final };
+    }
+
+    // Propagate winners
+    function propagateBracket(knock) {
+        if (!knock) return;
+        // Round32 winners
+        let w32 = knock.round32.map(m => {
+            let s1 = m.team1.score, s2 = m.team2.score;
+            if (s1 > s2) return m.team1;
+            if (s2 > s1) return m.team2;
+            return null;
+        });
+        // Round16
+        knock.round16 = knock.round16.map((m, idx) => {
+            let t1 = w32[idx*2] || null;
+            let t2 = w32[idx*2+1] || null;
+            return { ...m, team1: t1, team2: t2 };
+        });
+        let w16 = knock.round16.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        knock.quarter = knock.quarter.map((m, idx) => {
+            let t1 = w16[idx*2] || null;
+            let t2 = w16[idx*2+1] || null;
+            return { ...m, team1: t1, team2: t2 };
+        });
+        let wQ = knock.quarter.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        knock.semi = knock.semi.map((m, idx) => {
+            let t1 = wQ[idx*2] || null;
+            let t2 = wQ[idx*2+1] || null;
+            return { ...m, team1: t1, team2: t2 };
+        });
+        let wS = knock.semi.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        knock.final.team1 = wS[0] || null;
+        knock.final.team2 = wS[1] || null;
+    }
+
+    // -------- RENDER GROUP STAGE ----------
+    function renderGroups(standings) {
+        const container = document.getElementById('groupsArea');
+        container.innerHTML = '';
+        for (let g of GROUP_KEYS) {
+            let teams = GROUPS[g];
+            let matches = matchScores[g];
+            let st = standings[g];
+            let card = document.createElement('div');
+            card.className = 'group-card';
+            let matchesHtml = '';
+            matches.forEach((m, idx) => {
+                let homeTeam = teams[m.home];
+                let awayTeam = teams[m.away];
+                matchesHtml += `
+                    <div class="match">
+                        <span>${homeTeam} vs ${awayTeam}</span>
+                        <div>
+                            <input type="number" class="score-input" data-group="${g}" data-match="${idx}" data-side="home" value="${m.hScore}" min="0" style="width:55px">
+                            <span> - </span>
+                            <input type="number" class="score-input" data-group="${g}" data-match="${idx}" data-side="away" value="${m.aScore}" min="0" style="width:55px">
+                        </div>
+                    </div>
+                `;
+            });
+            let tableHtml = `<table><thead><tr><th>Team</th><th>Pts</th><th>GF</th><th>GA</th><th>GD</th></tr></thead><tbody>`;
+            st.forEach((team, pos) => {
+                let cls = (pos === 0 || pos === 1) ? 'qualified' : '';
+                tableHtml += `<tr class="${cls}"><td>${team.team}</td><td>${team.pts}</td><td>${team.gf}</td><td>${team.ga}</td><td>${team.gd}</td></tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            card.innerHTML = `<div class="group-title">Group ${g}</div>${matchesHtml}${tableHtml}`;
+            container.appendChild(card);
+        }
+        // attach events
+        document.querySelectorAll('.score-input').forEach(inp => {
+            inp.onchange = (e) => {
+                let grp = inp.dataset.group;
+                let midx = parseInt(inp.dataset.match);
+                let side = inp.dataset.side;
+                let val = parseInt(inp.value) || 0;
+                if (val < 0) val = 0;
+                if (side === 'home') matchScores[grp][midx].hScore = val;
+                else matchScores[grp][midx].aScore = val;
+                fullUpdate();
+            };
+        });
+    }
+
+    function renderThird(bestThird) {
+        const div = document.getElementById('thirdArea');
+        if (!bestThird.length) { div.innerHTML = '<p>⚠️ No third‑placed data</p>'; return; }
+        div.innerHTML = `<strong>🏅 Best 8 third‑placed teams (advance to R32):</strong><br>` +
+            bestThird.map(t => `▪️ ${t.team} (Group ${t.group}) | Pts:${t.pts} | GD:${t.gd}`).join('<br>');
+    }
+
+    function renderKnockout(knock) {
+        const bracketDiv = document.getElementById('bracketArea');
+        if (!knock || !knock.round32) { bracketDiv.innerHTML = '<p>⚠️ Not enough teams for knockout (need 32).</p>'; return; }
+        let html = `<div class="round">🔹 Round of 32</div>`;
+        knock.round32.forEach((m, i) => {
+            html += `<div class="ko-match">
+                        <span>${m.team1.name} (${m.team1.group})</span>
+                        <input type="number" class="ko-edit" data-round="32" data-idx="${i}" data-side="1" value="${m.team1.score}" min="0" style="width:60px">
+                        <span>-</span>
+                        <input type="number" class="ko-edit" data-round="32" data-idx="${i}" data-side="2" value="${m.team2.score}" min="0" style="width:60px">
+                        <span>${m.team2.name} (${m.team2.group})</span>
+                    </div>`;
+        });
+        html += `<div class="round">🔸 Round of 16</div>`;
+        knock.round16.forEach((m, i) => {
+            html += `<div class="ko-match">
+                        <span>${m.team1?.name || '??'}</span>
+                        <input type="number" class="ko-edit" data-round="16" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:55px">
+                        <span>-</span>
+                        <input type="number" class="ko-edit" data-round="16" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:55px">
+                        <span>${m.team2?.name || '??'}</span>
+                    </div>`;
+        });
+        html += `<div class="round">🔹 Quarter‑finals</div>`;
+        knock.quarter.forEach((m, i) => {
+            html += `<div class="ko-match">
+                        <span>${m.team1?.name || '?'}</span>
+                        <input type="number" class="ko-edit" data-round="qf" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:55px">
+                        <span>-</span>
+                        <input type="number" class="ko-edit" data-round="qf" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:55px">
+                        <span>${m.team2?.name || '?'}</span>
+                    </div>`;
+        });
+        html += `<div class="round">🔸 Semi‑finals</div>`;
+        knock.semi.forEach((m, i) => {
+            html += `<div class="ko-match">
+                        <span>${m.team1?.name || '—'}</span>
+                        <input type="number" class="ko-edit" data-round="semi" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:55px">
+                        <span>-</span>
+                        <input type="number" class="ko-edit" data-round="semi" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:55px">
+                        <span>${m.team2?.name || '—'}</span>
+                    </div>`;
+        });
+        html += `<div class="round">🏆 FINAL</div>`;
+        if (knock.final) {
+            html += `<div class="ko-match">
+                        <span>${knock.final.team1?.name || '?'}</span>
+                        <input type="number" id="finalScore1" value="${knock.final.score1}" min="0" style="width:55px">
+                        <span>-</span>
+                        <input type="number" id="finalScore2" value="${knock.final.score2}" min="0" style="width:55px">
+                        <span>${knock.final.team2?.name || '?'}</span>
+                    </div>`;
+        }
+        // Show champion if final winner exists
+        if (knock.final && knock.final.score1 !== undefined && knock.final.score2 !== undefined) {
+            let winner = null;
+            if (knock.final.score1 > knock.final.score2) winner = knock.final.team1;
+            if (knock.final.score2 > knock.final.score1) winner = knock.final.team2;
+            if (winner) html += `<div class="champion">🏆 CHAMPION: ${winner.name} 🏆</div>`;
+        }
+        bracketDiv.innerHTML = html;
+        attachKnockoutEvents();
+    }
+
+    function attachKnockoutEvents() {
+        document.querySelectorAll('.ko-edit').forEach(inp => {
+            inp.onchange = () => {
+                updateKnockoutFromInputs();
+                propagateBracket(knockout);
+                renderKnockout(knockout);
+            };
+        });
+        const f1 = document.getElementById('finalScore1');
+        const f2 = document.getElementById('finalScore2');
+        if (f1) f1.onchange = () => { updateKnockoutFromInputs(); propagateBracket(knockout); renderKnockout(knockout); };
+        if (f2) f2.onchange = () => { updateKnockoutFromInputs(); propagateBracket(knockout); renderKnockout(knockout); };
+    }
+
+    function updateKnockoutFromInputs() {
+        // Round32
+        for (let i=0; i<knockout.round32.length; i++) {
+            let s1 = document.querySelector(`.ko-edit[data-round="32"][data-idx="${i}"][data-side="1"]`);
+            let s2 = document.querySelector(`.ko-edit[data-round="32"][data-idx="${i}"][data-side="2"]`);
+            if (s1) knockout.round32[i].team1.score = parseInt(s1.value) || 0;
+            if (s2) knockout.round32[i].team2.score = parseInt(s2.value) || 0;
+        }
+        // Round16
+        for (let i=0; i<knockout.round16.length; i++) {
+            let s1 = document.querySelector(`.ko-edit[data-round="16"][data-idx="${i}"][data-side="1"]`);
+            let s2 = document.querySelector(`.ko-edit[data-round="16"][data-idx="${i}"][data-side="2"]`);
+            if (s1) knockout.round16[i].score1 = parseInt(s1.value) || 0;
+            if (s2) knockout.round16[i].score2 = parseInt(s2.value) || 0;
+        }
+        for (let i=0; i<knockout.quarter.length; i++) {
+            let s1 = document.querySelector(`.ko-edit[data-round="qf"][data-idx="${i}"][data-side="1"]`);
+            let s2 = document.querySelector(`.ko-edit[data-round="qf"][data-idx="${i}"][data-side="2"]`);
+            if (s1) knockout.quarter[i].score1 = parseInt(s1.value) || 0;
+            if (s2) knockout.quarter[i].score2 = parseInt(s2.value) || 0;
+        }
+        for (let i=0; i<knockout.semi.length; i++) {
+            let s1 = document.querySelector(`.ko-edit[data-round="semi"][data-idx="${i}"][data-side="1"]`);
+            let s2 = document.querySelector(`.ko-edit[data-round="semi"][data-idx="${i}"][data-side="2"]`);
+            if (s1) knockout.semi[i].score1 = parseInt(s1.value) || 0;
+            if (s2) knockout.semi[i].score2 = parseInt(s2.value) || 0;
+        }
+        let final1 = document.getElementById('finalScore1');
+        let final2 = document.getElementById('finalScore2');
+        if (final1 && knockout.final) knockout.final.score1 = parseInt(final1.value) || 0;
+        if (final2 && knockout.final) knockout.final.score2 = parseInt(final2.value) || 0;
+    }
+
+    // -------- MAIN UPDATE ----------
+    function fullUpdate() {
+        const standings = computeStandings();
+        const { qualified, bestThird } = getQualified(standings);
+        renderGroups(standings);
+        renderThird(bestThird);
+        const newBracket = buildKnockout(qualified);
+        if (newBracket) {
+            // preserve existing R32 scores if possible
+            if (knockout.round32 && knockout.round32.length === newBracket.round32.length) {
+                for (let i=0; i<newBracket.round32.length; i++) {
+                    let old = knockout.round32[i];
+                    let fresh = newBracket.round32[i];
+                    if (old && old.team1.name === fresh.team1.name && old.team2.name === fresh.team2.name) {
+                        fresh.team1.score = old.team1.score;
+                        fresh.team2.score = old.team2.score;
+                    }
+                }
+            }
+            knockout = newBracket;
+            propagateBracket(knockout);
+            renderKnockout(knockout);
+        } else {
+            document.getElementById('bracketArea').innerHTML = '<p>⚠️ Need exactly 32 qualified teams.</p>';
+        }
+    }
+
+    function resetAllGroups() {
+        for (let g of GROUP_KEYS) {
+            for (let m of matchScores[g]) {
+                m.hScore = 0;
+                m.aScore = 0;
+            }
+        }
+        fullUpdate();
+    }
+
+    document.getElementById('refreshBtn').onclick = () => fullUpdate();
+    document.getElementById('resetGroupsBtn').onclick = resetAllGroups;
+    fullUpdate();
+</script>
+</body>
+</html>
