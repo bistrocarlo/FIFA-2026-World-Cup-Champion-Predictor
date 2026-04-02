@@ -164,15 +164,15 @@
       flex-shrink: 0;
     }
 
-    .score-inputs {
+    .score-selects {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       justify-content: center;
     }
 
-    .score-inputs input,
-    .ko-score,
+    .score-selects select,
+    .ko-score-select,
     .tie-select {
       border: 2px solid #f1c40f;
       border-radius: 999px;
@@ -180,11 +180,12 @@
       text-align: center;
       font-weight: 800;
       background: #fff;
+      cursor: pointer;
     }
 
-    .score-inputs input,
-    .ko-score {
-      width: 58px;
+    .score-selects select,
+    .ko-score-select {
+      width: 70px;
       font-size: 1rem;
     }
 
@@ -333,7 +334,7 @@
 
     <div id="groupStageSection">
       <div class="note">
-        Enter all group scores. Standings update instantly. Top 2 in each group plus the best 8 third-placed teams advance.
+        Enter all group scores using dropdowns. Standings update instantly. Top 2 in each group plus the best 8 third-placed teams advance.
       </div>
       <div id="groupsContainer" class="groups-grid"></div>
       <div class="center-actions">
@@ -435,8 +436,6 @@
 
     // --------------------------------------------------------------
     // SCHEDULE BUILDER
-    // These are placeholders for date/city/stadium/kickoff fields.
-    // Match numbers are sequential 1-72 in game order.
     // --------------------------------------------------------------
     const HOST_CITIES = [
       ["Mexico City", "Estadio Azteca"],
@@ -507,6 +506,15 @@
     }
 
     initScores();
+
+    // Helper: generate dropdown options 0-10
+    function getScoreOptions(selectedValue) {
+      let options = '';
+      for (let i = 0; i <= 10; i++) {
+        options += `<option value="${i}" ${selectedValue == i ? 'selected' : ''}>${i}</option>`;
+      }
+      return options;
+    }
 
     // --------------------------------------------------------------
     // GROUP STANDINGS
@@ -740,14 +748,14 @@
                   <span>${homeTeam}</span>
                 </div>
 
-                <div class="score-inputs">
-                  <input type="number" min="0" step="1" value="${m.homeScore}"
-                    data-group="${g}" data-match="${idx}" data-side="home"
-                    class="group-score" ${groupStageLocked ? "disabled" : ""}>
+                <div class="score-selects">
+                  <select data-group="${g}" data-match="${idx}" data-side="home" class="group-score" ${groupStageLocked ? "disabled" : ""}>
+                    ${getScoreOptions(m.homeScore)}
+                  </select>
                   <span>-</span>
-                  <input type="number" min="0" step="1" value="${m.awayScore}"
-                    data-group="${g}" data-match="${idx}" data-side="away"
-                    class="group-score" ${groupStageLocked ? "disabled" : ""}>
+                  <select data-group="${g}" data-match="${idx}" data-side="away" class="group-score" ${groupStageLocked ? "disabled" : ""}>
+                    ${getScoreOptions(m.awayScore)}
+                  </select>
                 </div>
 
                 <div class="team-box right">
@@ -801,14 +809,13 @@
     }
 
     function attachGroupEvents() {
-      document.querySelectorAll(".group-score").forEach(input => {
-        input.onchange = () => {
-          const group = input.dataset.group;
-          const matchIdx = Number(input.dataset.match);
-          const side = input.dataset.side;
-          let value = Number(input.value);
-          if (!Number.isFinite(value) || value < 0) value = 0;
-          input.value = value;
+      document.querySelectorAll(".group-score").forEach(select => {
+        select.onchange = () => {
+          const group = select.dataset.group;
+          const matchIdx = Number(select.dataset.match);
+          const side = select.dataset.side;
+          let value = Number(select.value);
+          if (isNaN(value) || value < 0) value = 0;
 
           if (side === "home") groupScores[group][matchIdx].homeScore = value;
           else groupScores[group][matchIdx].awayScore = value;
@@ -852,13 +859,15 @@
                   ${m.team1 ? `<img class="flag" src="${getFlagUrl(m.team1.name)}" alt=""><span>${m.team1.name} (${m.team1.group})</span>` : `<span>—</span>`}
                 </div>
 
-                <input class="ko-score" type="number" min="0" step="1"
-                  data-round="${roundKey}" data-idx="${i}" data-side="1" value="${m.score1}">
+                <select class="ko-score-select" data-round="${roundKey}" data-idx="${i}" data-side="1">
+                  ${getScoreOptions(m.score1)}
+                </select>
 
                 <span>-</span>
 
-                <input class="ko-score" type="number" min="0" step="1"
-                  data-round="${roundKey}" data-idx="${i}" data-side="2" value="${m.score2}">
+                <select class="ko-score-select" data-round="${roundKey}" data-idx="${i}" data-side="2">
+                  ${getScoreOptions(m.score2)}
+                </select>
 
                 <select class="tie-select" data-round="${roundKey}" data-idx="${i}">
                   <option value="1" ${m.tieWinner === 1 ? "selected" : ""}>Tie winner: Team 1</option>
@@ -895,14 +904,13 @@
     }
 
     function attachKnockoutEvents() {
-      document.querySelectorAll(".ko-score").forEach(input => {
-        input.onchange = () => {
-          const roundKey = input.dataset.round;
-          const idx = Number(input.dataset.idx);
-          const side = Number(input.dataset.side);
-          let value = Number(input.value);
-          if (!Number.isFinite(value) || value < 0) value = 0;
-          input.value = value;
+      document.querySelectorAll(".ko-score-select").forEach(select => {
+        select.onchange = () => {
+          const roundKey = select.dataset.round;
+          const idx = Number(select.dataset.idx);
+          const side = Number(select.dataset.side);
+          let value = Number(select.value);
+          if (isNaN(value) || value < 0) value = 0;
 
           const arr = getRoundArray(roundKey);
           const match = arr[idx];
