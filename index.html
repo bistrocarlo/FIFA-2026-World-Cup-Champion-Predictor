@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 2026 World Cup Predictor</title>
+    <title>🏆 2026 World Cup Predictor – Super Fun Edition</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
-            color: #1e2937;
+            background: linear-gradient(135deg, #fefce8 0%, #ecfdf5 100%);
+            color: #0f172a;
+            font-size: 1.25rem;
             line-height: 1.6;
-            font-size: 1.15rem;
             min-height: 100vh;
             padding: 20px;
         }
         .container {
-            max-width: 1650px;
+            max-width: 1700px;
             margin: 0 auto;
             background: white;
-            border-radius: 32px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(90deg, #1e40af, #3b82f6);
-            color: white;
-            padding: 28px 40px;
+            background: linear-gradient(90deg, #22c55e, #eab308);
+            color: #0f172a;
+            padding: 30px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -34,33 +34,34 @@
             gap: 20px;
         }
         h1 {
-            font-size: 2.8rem;
+            font-size: 3.2rem;
             font-weight: 900;
         }
         .header p {
-            font-size: 1.4rem;
-            opacity: 0.95;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
         .stepper {
             display: flex;
             background: #f8fafc;
-            padding: 16px 40px;
-            gap: 12px;
+            padding: 20px 40px;
+            gap: 15px;
         }
         .step {
             flex: 1;
-            padding: 16px 24px;
+            padding: 18px 30px;
             border-radius: 9999px;
             text-align: center;
-            font-weight: 800;
-            font-size: 1.3rem;
-            transition: all 0.3s;
+            font-weight: 900;
+            font-size: 1.5rem;
+            transition: all 0.4s ease;
         }
         .step.active {
-            background: #1e40af;
+            background: #22c55e;
             color: white;
-            box-shadow: 0 6px 20px rgba(30,64,175,0.4);
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(34,197,94,0.4);
         }
         .step.inactive {
             background: #e2e8f0;
@@ -68,132 +69,133 @@
         }
 
         button {
-            padding: 12px 28px;
+            padding: 14px 32px;
             border: none;
             border-radius: 9999px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 800;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
-        button:hover { transform: translateY(-3px); }
-        .btn-primary { background: #1e40af; color: white; }
-        .btn-success { background: #16a34a; color: white; }
-        .btn-warning { background: #ea580c; color: white; }
-        .btn-secondary { background: #64748b; color: white; }
+        button:hover { transform: scale(1.08); }
+        .btn-green { background: #22c55e; color: white; }
+        .btn-yellow { background: #eab308; color: #0f172a; }
+        .btn-blue { background: #3b82f6; color: white; }
+        .btn-gray { background: #64748b; color: white; }
 
         .content { padding: 40px; }
 
         .info-note {
-            background: #ecfdf5;
-            border-left: 8px solid #16a34a;
-            padding: 20px 28px;
-            border-radius: 20px;
+            background: #fefce8;
+            border-left: 10px solid #eab308;
+            padding: 24px 32px;
+            border-radius: 24px;
             margin-bottom: 32px;
-            font-size: 1.25rem;
+            font-size: 1.4rem;
+            font-weight: 600;
         }
 
         .groups-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
             gap: 32px;
         }
         .group-card {
-            background: #f8fafc;
-            border-radius: 28px;
-            padding: 28px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            background: #ffffff;
+            border: 4px solid #22c55e;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
         }
         .group-title {
-            font-size: 2.2rem;
+            font-size: 2.6rem;
             font-weight: 900;
-            color: #1e40af;
-            margin-bottom: 24px;
+            color: #0f172a;
+            margin-bottom: 28px;
+            text-align: center;
         }
         .match-row {
-            background: white;
+            background: #f8fafc;
             border-radius: 9999px;
-            padding: 18px 24px;
-            margin: 16px 0;
+            padding: 20px 28px;
+            margin: 18px 0;
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            gap: 20px;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.05);
         }
         .team-with-flag {
             display: flex;
             align-items: center;
-            gap: 14px;
-            font-weight: 700;
-            font-size: 1.35rem;
-            min-width: 190px;
+            gap: 16px;
+            font-weight: 800;
+            font-size: 1.5rem;
+            min-width: 210px;
         }
         .team-flag {
-            width: 48px;
-            height: 32px;
+            width: 58px;
+            height: 38px;
             object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-        }
-        .score-inputs {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .score-inputs input {
-            width: 80px;
-            height: 62px;
+            width: 92px;
+            height: 68px;
             text-align: center;
-            font-size: 1.8rem;
-            font-weight: 800;
-            border: 4px solid #1e40af;
+            font-size: 2.2rem;
+            font-weight: 900;
+            border: 5px solid #eab308;
             border-radius: 9999px;
             background: white;
         }
 
         .standings-table {
             width: 100%;
+            margin-top: 28px;
             border-collapse: collapse;
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            margin-top: 24px;
-            font-size: 1.15rem;
+            font-size: 1.3rem;
         }
         .standings-table th, .standings-table td {
-            padding: 14px 16px;
+            padding: 16px 20px;
+            text-align: left;
         }
-        .standings-table th { background: #dbeafe; }
-        .qualified-row { background: #d1fae5 !important; font-weight: 700; }
+        .standings-table th { background: #ecfdf5; font-weight: 700; }
+        .qualified-row { background: #d1fae5; font-weight: 800; }
 
         .ko-match {
             background: white;
+            border: 3px solid #22c55e;
             border-radius: 9999px;
-            padding: 20px 28px;
-            margin: 16px 0;
+            padding: 24px 32px;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.07);
-            font-size: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-size: 1.45rem;
         }
         .round-title {
-            font-size: 2rem;
+            font-size: 2.4rem;
             font-weight: 900;
-            color: #1e40af;
-            margin: 40px 0 20px;
+            color: #eab308;
+            margin: 50px 0 24px;
+            text-align: center;
         }
         .champion-box {
-            background: linear-gradient(90deg, #fcd34d, #f59e0b);
-            color: #1e3a8a;
+            background: linear-gradient(90deg, #eab308, #f59e0b);
+            color: #0f172a;
             text-align: center;
-            padding: 32px;
+            padding: 40px;
             border-radius: 9999px;
-            font-size: 2.6rem;
+            font-size: 3rem;
             font-weight: 900;
-            margin: 40px 0;
-            box-shadow: 0 15px 35px rgba(245,158,11,0.4);
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 20px 50px rgba(234,179,8,0.5);
         }
 
         .hidden { display: none; }
@@ -203,19 +205,19 @@
 <div class="container">
     <div class="header">
         <div>
-            <h1>🏆 2026 World Cup Predictor</h1>
-            <p>Step-by-step with big flags & live updates</p>
+            <h1>🏆 2026 WORLD CUP PREDICTOR</h1>
+            <p>Super Bright • Big Flags • Live & Fun!</p>
         </div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button onclick="randomAllGroups()" class="btn-warning">🎲 Random All Groups</button>
-            <button onclick="simulateKnockout()" class="btn-warning">🎲 Simulate Knockout</button>
-            <button onclick="resetEverything()" class="btn-secondary">🔄 Reset All</button>
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+            <button onclick="randomAllGroups()" class="btn-yellow">🎲 Random All Groups</button>
+            <button onclick="simulateKnockout()" class="btn-green">⚡ Simulate Knockout</button>
+            <button onclick="resetEverything()" class="btn-gray">🔄 Reset All</button>
         </div>
     </div>
 
     <div class="stepper">
-        <div class="step active" id="step1">1. Group Stage</div>
-        <div class="step inactive" id="step2">2. Knockout Stage</div>
+        <div class="step active" id="step1">1. GROUP STAGE</div>
+        <div class="step inactive" id="step2">2. KNOCKOUT STAGE</div>
     </div>
 
     <div class="content">
@@ -223,14 +225,14 @@
         <!-- GROUP STAGE -->
         <div id="groupStageSection">
             <div class="info-note">
-                Enter the exact scores for every match.<br>
-                <strong>Top 2 teams + the best 8 third-placed teams</strong> advance to the Round of 32.
+                ✨ Enter scores for every match!<br>
+                Top 2 + best 8 third-placed teams advance. Everything updates instantly!
             </div>
             <div id="groupsContainer" class="groups-grid"></div>
 
-            <div style="text-align:center; margin:50px 0 30px;">
-                <button onclick="goToKnockout()" class="btn-success" style="font-size:1.5rem; padding:20px 60px;">
-                    ✅ Finish Group Stage → Go to Knockout
+            <div style="text-align:center; margin:60px 0;">
+                <button onclick="goToKnockout()" class="btn-green" style="font-size:1.8rem; padding:24px 80px;">
+                    ✅ Finish Groups → Knockout Stage!
                 </button>
             </div>
         </div>
@@ -238,22 +240,22 @@
         <!-- KNOCKOUT STAGE -->
         <div id="knockoutStageSection" class="hidden">
             <div class="info-note">
-                Enter scores in the knockout stage. The bracket updates live as you predict winners!
+                🏆 Knockout time! Change any score and watch the bracket update live. So much fun!
             </div>
 
-            <div id="thirdPlaceContainer" style="background:#f0f9ff; padding:20px; border-radius:20px; margin-bottom:30px; font-size:1.2rem;"></div>
+            <div id="thirdPlaceContainer" style="background:#ecfdf5; padding:28px; border-radius:28px; margin-bottom:40px; font-size:1.35rem; font-weight:700;"></div>
 
             <div id="bracketContainer"></div>
 
-            <div style="text-align:center; margin-top:40px;">
-                <button onclick="backToGroups()" class="btn-secondary">⬅️ Back to Group Stage</button>
+            <div style="text-align:center; margin-top:50px;">
+                <button onclick="backToGroups()" class="btn-gray" style="font-size:1.3rem;">⬅️ Back to Groups</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Groups and Flags
+    // Data
     const GROUPS = {
         A: ["Mexico", "South Africa", "South Korea", "Czechia"],
         B: ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
@@ -271,30 +273,29 @@
     const GROUP_KEYS = Object.keys(GROUPS);
 
     const flagMap = {
-        "Mexico":"mx", "South Africa":"za", "South Korea":"kr", "Czechia":"cz",
-        "Canada":"ca", "Bosnia and Herzegovina":"ba", "Qatar":"qa", "Switzerland":"ch",
-        "Brazil":"br", "Morocco":"ma", "Haiti":"ht", "Scotland":"gb-sct",
-        "United States":"us", "Paraguay":"py", "Australia":"au", "Turkey":"tr",
-        "Germany":"de", "Curacao":"cw", "Ivory Coast":"ci", "Ecuador":"ec",
-        "Netherlands":"nl", "Japan":"jp", "Sweden":"se", "Tunisia":"tn",
-        "Belgium":"be", "Egypt":"eg", "Iran":"ir", "New Zealand":"nz",
-        "Spain":"es", "Cape Verde":"cv", "Saudi Arabia":"sa", "Uruguay":"uy",
-        "France":"fr", "Senegal":"sn", "Iraq":"iq", "Norway":"no",
-        "Argentina":"ar", "Algeria":"dz", "Austria":"at", "Jordan":"jo",
-        "Portugal":"pt", "DR Congo":"cd", "Uzbekistan":"uz", "Colombia":"co",
-        "England":"gb-eng", "Croatia":"hr", "Ghana":"gh", "Panama":"pa"
+        "Mexico":"mx","South Africa":"za","South Korea":"kr","Czechia":"cz",
+        "Canada":"ca","Bosnia and Herzegovina":"ba","Qatar":"qa","Switzerland":"ch",
+        "Brazil":"br","Morocco":"ma","Haiti":"ht","Scotland":"gb-sct",
+        "United States":"us","Paraguay":"py","Australia":"au","Turkey":"tr",
+        "Germany":"de","Curacao":"cw","Ivory Coast":"ci","Ecuador":"ec",
+        "Netherlands":"nl","Japan":"jp","Sweden":"se","Tunisia":"tn",
+        "Belgium":"be","Egypt":"eg","Iran":"ir","New Zealand":"nz",
+        "Spain":"es","Cape Verde":"cv","Saudi Arabia":"sa","Uruguay":"uy",
+        "France":"fr","Senegal":"sn","Iraq":"iq","Norway":"no",
+        "Argentina":"ar","Algeria":"dz","Austria":"at","Jordan":"jo",
+        "Portugal":"pt","DR Congo":"cd","Uzbekistan":"uz","Colombia":"co",
+        "England":"gb-eng","Croatia":"hr","Ghana":"gh","Panama":"pa"
     };
 
     function getFlagUrl(team) {
         const code = flagMap[team] || "xx";
-        if (code === "gb-sct") return "https://flagcdn.com/w60/gb-sct.png";
-        if (code === "gb-eng") return "https://flagcdn.com/w60/gb-eng.png";
-        return `https://flagcdn.com/w60/${code}.png`;
+        if (code === "gb-sct") return "https://flagcdn.com/w80/gb-sct.png";
+        if (code === "gb-eng") return "https://flagcdn.com/w80/gb-eng.png";
+        return `https://flagcdn.com/w80/${code}.png`;
     }
 
     let matchScores = {};
     let knockoutData = null;
-    let groupStageLocked = false;
 
     function initScores() {
         matchScores = {};
@@ -302,7 +303,7 @@
             let matches = [];
             for (let i = 0; i < 4; i++) {
                 for (let j = i+1; j < 4; j++) {
-                    matches.push({ homeIdx: i, awayIdx: j, homeScore: 0, awayScore: 0 });
+                    matches.push({ homeIdx: i, awayIdx: j, homeScore: 1, awayScore: 1 });
                 }
             }
             matchScores[g] = matches;
@@ -314,7 +315,7 @@
         let standings = {};
         for (let g of GROUP_KEYS) {
             let teams = GROUPS[g];
-            let stats = teams.map(team => ({ team, pts:0, gf:0, ga:0, gd:0 }));
+            let stats = teams.map(team => ({team, pts:0, gf:0, ga:0, gd:0}));
             for (let m of matchScores[g]) {
                 let home = stats[m.homeIdx];
                 let away = stats[m.awayIdx];
@@ -336,11 +337,11 @@
         const standings = computeStandings();
         let allThird = [];
         for (let g of GROUP_KEYS) {
-            if (standings[g][2]) allThird.push({...standings[g][2], group: g});
+            if (standings[g][2]) allThird.push({...standings[g][2], group:g});
         }
-        allThird.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+        allThird.sort((a,b) => b.pts-a.pts || b.gd-b.gd || b.gf-b.gf);
         const best8 = allThird.slice(0,8);
-        const bestGroups = new Set(best8.map(t => t.group));
+        const bestGroups = new Set(best8.map(t=>t.group));
 
         let qualified = [];
         for (let g of GROUP_KEYS) {
@@ -356,14 +357,13 @@
         let round32 = [];
         for (let i = 0; i < 16; i++) {
             round32.push({
-                team1: {name: qualified[i].team, group: qualified[i].group},
-                team2: {name: qualified[31-i].team, group: qualified[31-i].group},
-                score1: 0,
-                score2: 0
+                team1: {name: qualified[i].team},
+                team2: {name: qualified[31-i].team},
+                score1: 0, score2: 0
             });
         }
         return {
-            round32: round32,
+            round32,
             round16: Array(8).fill().map(() => ({team1:null, team2:null, score1:0, score2:0})),
             quarter: Array(4).fill().map(() => ({team1:null, team2:null, score1:0, score2:0})),
             semi: Array(2).fill().map(() => ({team1:null, team2:null, score1:0, score2:0})),
@@ -373,22 +373,20 @@
 
     function propagateKnockout() {
         if (!knockoutData) return;
-        // R32 winners
         let w32 = knockoutData.round32.map(m => m.score1 > m.score2 ? m.team1 : m.score2 > m.score1 ? m.team2 : null);
         for (let i = 0; i < 8; i++) {
             knockoutData.round16[i].team1 = w32[i*2];
-            knockoutData.round16[i].team2 = w32[i*2 + 1];
+            knockoutData.round16[i].team2 = w32[i*2+1];
         }
-        // Continue propagation for other rounds (similar logic)
         let w16 = knockoutData.round16.map(m => m.score1 > m.score2 ? m.team1 : m.score2 > m.score1 ? m.team2 : null);
         for (let i = 0; i < 4; i++) {
             knockoutData.quarter[i].team1 = w16[i*2];
-            knockoutData.quarter[i].team2 = w16[i*2 + 1];
+            knockoutData.quarter[i].team2 = w16[i*2+1];
         }
         let wQ = knockoutData.quarter.map(m => m.score1 > m.score2 ? m.team1 : m.score2 > m.score1 ? m.team2 : null);
         for (let i = 0; i < 2; i++) {
             knockoutData.semi[i].team1 = wQ[i*2];
-            knockoutData.semi[i].team2 = wQ[i*2 + 1];
+            knockoutData.semi[i].team2 = wQ[i*2+1];
         }
         let wS = knockoutData.semi.map(m => m.score1 > m.score2 ? m.team1 : m.score2 > m.score1 ? m.team2 : null);
         knockoutData.final.team1 = wS[0];
@@ -401,56 +399,50 @@
         const standings = computeStandings();
 
         for (let g of GROUP_KEYS) {
-            let card = document.createElement('div');
+            const card = document.createElement('div');
             card.className = 'group-card';
-            let teams = GROUPS[g];
+            const teams = GROUPS[g];
             let matchesHtml = '';
 
             matchScores[g].forEach((m, idx) => {
-                let home = teams[m.homeIdx];
-                let away = teams[m.awayIdx];
+                const home = teams[m.homeIdx];
+                const away = teams[m.awayIdx];
                 matchesHtml += `
                     <div class="match-row">
                         <div class="team-with-flag">
-                            <img class="team-flag" src="${getFlagUrl(home)}" alt="${home}">
-                            ${home}
+                            <img class="team-flag" src="${getFlagUrl(home)}"> ${home}
                         </div>
-                        <div class="score-inputs">
-                            <input type="number" min="0" value="${m.homeScore}" data-group="${g}" data-match="${idx}" data-side="home">
-                            <span>–</span>
-                            <input type="number" min="0" value="${m.awayScore}" data-group="${g}" data-match="${idx}" data-side="away">
+                        <div style="display:flex; align-items:center; gap:20px; font-size:2.4rem;">
+                            <input type="number" min="0" value="${m.homeScore}" data-group="${g}" data-match="${idx}" data-side="home" style="width:92px;">
+                            <span style="color:#eab308;">–</span>
+                            <input type="number" min="0" value="${m.awayScore}" data-group="${g}" data-match="${idx}" data-side="away" style="width:92px;">
                         </div>
-                        <div class="team-with-flag" style="justify-content: flex-end;">
-                            <img class="team-flag" src="${getFlagUrl(away)}" alt="${away}">
-                            ${away}
+                        <div class="team-with-flag" style="justify-content:flex-end;">
+                            <img class="team-flag" src="${getFlagUrl(away)}"> ${away}
                         </div>
                     </div>`;
             });
 
             let tableHtml = `<table class="standings-table"><thead><tr><th>Team</th><th>Pts</th><th>GF</th><th>GA</th><th>GD</th></tr></thead><tbody>`;
-            standings[g].forEach((team, pos) => {
-                let rowClass = pos < 2 ? 'qualified-row' : '';
-                tableHtml += `<tr class="${rowClass}">
-                    <td><img class="team-flag" src="${getFlagUrl(team.team)}" style="width:32px;"> ${team.team}</td>
-                    <td>${team.pts}</td><td>${team.gf}</td><td>${team.ga}</td><td>${team.gd}</td>
-                </tr>`;
+            standings[g].forEach((t, i) => {
+                const cls = i < 2 ? 'qualified-row' : '';
+                tableHtml += `<tr class="${cls}"><td><img class="team-flag" src="${getFlagUrl(t.team)}" style="width:38px;"> ${t.team}</td><td>${t.pts}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gd}</td></tr>`;
             });
-            tableHtml += `</tbody></table>`;
+            tableHtml += '</tbody></table>';
 
             card.innerHTML = `
                 <div class="group-title">Group ${g}</div>
                 ${matchesHtml}
                 ${tableHtml}
-                <div style="margin-top:20px; display:flex; gap:12px;">
-                    <button onclick="randomGroup('${g}')" class="btn-warning">🎲 Random Group</button>
-                    <button onclick="resetGroup('${g}')" class="btn-secondary">Reset Group</button>
+                <div style="margin-top:24px; text-align:center;">
+                    <button onclick="randomGroup('${g}')" class="btn-yellow">🎲 Random This Group</button>
                 </div>`;
 
             container.appendChild(card);
         }
 
-        // Attach input listeners
-        document.querySelectorAll('.score-inputs input').forEach(inp => {
+        // Live input handling
+        document.querySelectorAll('input[data-group]').forEach(inp => {
             inp.addEventListener('input', () => {
                 let val = Math.max(0, parseInt(inp.value) || 0);
                 inp.value = val;
@@ -459,33 +451,27 @@
                 const side = inp.dataset.side;
                 if (side === 'home') matchScores[g][idx].homeScore = val;
                 else matchScores[g][idx].awayScore = val;
-                renderGroups();
+                renderGroups();   // instant refresh
             });
         });
     }
 
-    function randomGroup(group) {
-        matchScores[group].forEach(m => {
-            m.homeScore = Math.floor(Math.random() * 5);
-            m.awayScore = Math.floor(Math.random() * 5);
+    function randomGroup(g) {
+        matchScores[g].forEach(m => {
+            m.homeScore = Math.floor(Math.random() * 6);
+            m.awayScore = Math.floor(Math.random() * 6);
         });
         renderGroups();
     }
 
     function randomAllGroups() {
-        for (let g of GROUP_KEYS) randomGroup(g);
-    }
-
-    function resetGroup(group) {
-        matchScores[group].forEach(m => { m.homeScore = 0; m.awayScore = 0; });
-        renderGroups();
+        GROUP_KEYS.forEach(g => randomGroup(g));
     }
 
     function resetEverything() {
-        if (confirm("Reset everything and start over?")) {
+        if (confirm("Reset everything and start fresh?")) {
             initScores();
             knockoutData = null;
-            groupStageLocked = false;
             document.getElementById('groupStageSection').classList.remove('hidden');
             document.getElementById('knockoutStageSection').classList.add('hidden');
             document.getElementById('step1').classList.add('active');
@@ -496,11 +482,10 @@
 
     function goToKnockout() {
         const {qualified} = getQualifiedTeams();
-        if (qualified.length !== 32) {
-            alert("Please fill in scores for all group matches first.");
+        if (qualified.length < 32) {
+            alert("Please complete all group matches first!");
             return;
         }
-        groupStageLocked = true;
         knockoutData = buildKnockoutBracket(qualified);
         propagateKnockout();
 
@@ -516,65 +501,65 @@
         const container = document.getElementById('bracketContainer');
         let html = '';
 
-        // Best third-placed teams
+        // Best thirds
         const {bestThird} = getQualifiedTeams();
-        let thirdHtml = `<strong>🏅 Best 8 Third-Placed Teams Advancing:</strong><br>`;
+        let thirdHtml = `<strong>🏅 Best 8 Third-Placed Teams Advancing:</strong><br><br>`;
         bestThird.forEach(t => {
-            thirdHtml += `<img class="team-flag" src="${getFlagUrl(t.team)}" style="width:36px;vertical-align:middle;margin:0 8px;"> ${t.team} (Group ${t.group}) — ${t.pts} pts<br>`;
+            thirdHtml += `<img class="team-flag" src="${getFlagUrl(t.team)}" style="width:48px;vertical-align:middle;"> ${t.team} (Group ${t.group}) — ${t.pts} pts<br>`;
         });
         document.getElementById('thirdPlaceContainer').innerHTML = thirdHtml;
 
         // Round of 32
-        html += `<div class="round-title">🔹 Round of 32</div>`;
+        html += `<div class="round-title">🔹 ROUND OF 32</div>`;
         knockoutData.round32.forEach((m, i) => {
             html += `
             <div class="ko-match">
                 <div class="team-with-flag"><img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}</div>
-                <div class="score-inputs">
-                    <input type="number" min="0" value="${m.score1}" data-round="32" data-idx="${i}" data-side="1" style="width:78px;">
-                    <span>–</span>
-                    <input type="number" min="0" value="${m.score2}" data-round="32" data-idx="${i}" data-side="2" style="width:78px;">
+                <div style="display:flex; align-items:center; gap:24px; font-size:2.6rem;">
+                    <input type="number" min="0" value="${m.score1}" data-round="32" data-idx="${i}" data-side="1" style="width:100px;">
+                    <span style="color:#eab308;">–</span>
+                    <input type="number" min="0" value="${m.score2}" data-round="32" data-idx="${i}" data-side="2" style="width:100px;">
                 </div>
                 <div class="team-with-flag" style="justify-content:flex-end;"><img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}</div>
             </div>`;
         });
 
-        // Other rounds (simplified for brevity - you can expand similarly)
-        const roundNames = [
-            {name: "Round of 16", key: "round16"},
-            {name: "Quarter-finals", key: "quarter"},
-            {name: "Semi-finals", key: "semi"}
+        // Other rounds (live updating)
+        const rounds = [
+            {title: "ROUND OF 16", key: "round16"},
+            {title: "QUARTER-FINALS", key: "quarter"},
+            {title: "SEMI-FINALS", key: "semi"}
         ];
 
-        roundNames.forEach(r => {
-            html += `<div class="round-title">🔸 ${r.name}</div>`;
+        rounds.forEach(r => {
+            html += `<div class="round-title">🔸 ${r.title}</div>`;
             knockoutData[r.key].forEach((m, i) => {
-                const t1 = m.team1 ? `<img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}` : '?';
-                const t2 = m.team2 ? `<img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}` : '?';
+                const t1 = m.team1 ? `<img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}` : 'TBD';
+                const t2 = m.team2 ? `<img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}` : 'TBD';
                 html += `
                 <div class="ko-match">
                     <div>${t1}</div>
-                    <div class="score-inputs">
-                        <input type="number" min="0" value="${m.score1}" data-round="${r.key}" data-idx="${i}" data-side="1" style="width:78px;">
-                        <span>–</span>
-                        <input type="number" min="0" value="${m.score2}" data-round="${r.key}" data-idx="${i}" data-side="2" style="width:78px;">
+                    <div style="display:flex; align-items:center; gap:24px; font-size:2.6rem;">
+                        <input type="number" min="0" value="${m.score1}" data-round="${r.key}" data-idx="${i}" data-side="1" style="width:100px;">
+                        <span style="color:#eab308;">–</span>
+                        <input type="number" min="0" value="${m.score2}" data-round="${r.key}" data-idx="${i}" data-side="2" style="width:100px;">
                     </div>
                     <div>${t2}</div>
                 </div>`;
             });
         });
 
-        // Final + Champion
-        html += `<div class="round-title">🏆 FINAL</div>`;
+        // Final
+        html += `<div class="round-title">🏆 THE FINAL</div>`;
         html += `
         <div class="ko-match">
-            <div>${knockoutData.final.team1 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team1.name)}"> ${knockoutData.final.team1.name}` : '?'}</div>
-            <div class="score-inputs">
-                <input type="number" id="finalScore1" min="0" value="${knockoutData.final.score1}" style="width:78px;">
-                <span>–</span>
-                <input type="number" id="finalScore2" min="0" value="${knockoutData.final.score2}" style="width:78px;">
+            <div>${knockoutData.final.team1 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team1.name)}"> ${knockoutData.final.team1.name}` : 'TBD'}</div>
+            <div style="display:flex; align-items:center; gap:24px; font-size:2.8rem;">
+                <input type="number" id="final1" min="0" value="${knockoutData.final.score1}" style="width:110px;">
+                <span style="color:#eab308;">–</span>
+                <input type="number" id="final2" min="0" value="${knockoutData.final.score2}" style="width:110px;">
             </div>
-            <div>${knockoutData.final.team2 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team2.name)}"> ${knockoutData.final.team2.name}` : '?'}</div>
+            <div>${knockoutData.final.team2 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team2.name)}"> ${knockoutData.final.team2.name}` : 'TBD'}</div>
         </div>`;
 
         if (knockoutData.final.team1 && knockoutData.final.team2) {
@@ -582,65 +567,52 @@
                          knockoutData.final.score2 > knockoutData.final.score1 ? knockoutData.final.team2 : null;
             if (winner) {
                 html += `<div class="champion-box">
-                    🏆 CHAMPION: <img class="team-flag" src="${getFlagUrl(winner.name)}" style="width:52px;vertical-align:middle;"> ${winner.name} 🏆
+                    🏆 CHAMPION: <img class="team-flag" src="${getFlagUrl(winner.name)}" style="width:68px;"> ${winner.name} 🏆
                 </div>`;
             }
         }
 
         container.innerHTML = html;
 
-        // Attach knockout listeners
+        // Attach live listeners for knockout
         document.querySelectorAll('.ko-match input').forEach(inp => {
             inp.addEventListener('input', () => {
                 let val = Math.max(0, parseInt(inp.value) || 0);
                 inp.value = val;
-
-                const round = inp.dataset.round;
+                const roundType = inp.dataset.round;
                 const idx = parseInt(inp.dataset.idx);
-                const side = parseInt(inp.dataset.side);
+                const side = parseInt(inp.dataset.side) || 1;
 
-                if (round === "32") {
+                if (roundType === "32") {
                     if (side === 1) knockoutData.round32[idx].score1 = val;
                     else knockoutData.round32[idx].score2 = val;
-                } else if (round === "final") {
-                    // handled separately below
+                } else if (roundType === "final") {
+                    if (inp.id === "final1") knockoutData.final.score1 = val;
+                    if (inp.id === "final2") knockoutData.final.score2 = val;
                 } else {
-                    // For other rounds (you can expand the update logic similarly)
+                    // other rounds
+                    const arr = knockoutData[roundType];
+                    if (side === 1) arr[idx].score1 = val;
+                    else arr[idx].score2 = val;
                 }
-
                 propagateKnockout();
                 renderKnockout();
             });
-        });
-
-        // Final score listeners
-        const f1 = document.getElementById('finalScore1');
-        const f2 = document.getElementById('finalScore2');
-        if (f1) f1.addEventListener('input', () => {
-            knockoutData.final.score1 = Math.max(0, parseInt(f1.value) || 0);
-            propagateKnockout();
-            renderKnockout();
-        });
-        if (f2) f2.addEventListener('input', () => {
-            knockoutData.final.score2 = Math.max(0, parseInt(f2.value) || 0);
-            propagateKnockout();
-            renderKnockout();
         });
     }
 
     function simulateKnockout() {
         if (!knockoutData) return;
-        // Simple random simulation for all knockout matches
         knockoutData.round32.forEach(m => {
-            m.score1 = Math.floor(Math.random()*4);
-            m.score2 = Math.floor(Math.random()*4);
+            m.score1 = Math.floor(Math.random() * 5);
+            m.score2 = Math.floor(Math.random() * 5);
         });
         propagateKnockout();
         renderKnockout();
     }
 
     function backToGroups() {
-        if (confirm("Go back to group stage? Current knockout progress will be lost.")) {
+        if (confirm("Return to group stage? Knockout progress will be lost.")) {
             knockoutData = null;
             document.getElementById('knockoutStageSection').classList.add('hidden');
             document.getElementById('groupStageSection').classList.remove('hidden');
@@ -649,7 +621,7 @@
         }
     }
 
-    // Initial render
+    // Start the app
     renderGroups();
 </script>
 </body>
