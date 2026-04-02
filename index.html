@@ -218,6 +218,10 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        input:disabled {
+            background: #e9ecef;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -276,7 +280,6 @@
     };
     const GROUP_KEYS = Object.keys(GROUPS);
 
-    // Map team name -> country code (for flag CDN)
     const flagMap = {
         "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czechia": "cz",
         "Canada": "ca", "Bosnia and Herzegovina": "ba", "Qatar": "qa", "Switzerland": "ch",
@@ -292,22 +295,20 @@
         "England": "gb-eng", "Croatia": "hr", "Ghana": "gh", "Panama": "pa"
     };
 
-    // Helper: flag image url
     function getFlagUrl(team) {
-        let code = flagMap[team] || "unknown";
+        let code = flagMap[team];
+        if (!code) return "https://flagcdn.com/w40/unknown.png";
         if (code === "gb-sct") return "https://flagcdn.com/w40/gb-sct.png";
         if (code === "gb-eng") return "https://flagcdn.com/w40/gb-eng.png";
         return `https://flagcdn.com/w40/${code}.png`;
     }
 
-    // Store group match scores
-    let matchScores = {};
+    // ---------- DATA ----------
+    let matchScores = {};      // group -> array of matches
+    let knockoutData = null;   // { round32, round16, quarter, semi, final }
+    let groupStageLocked = false;
 
-    // Knockout data
-    let knockoutData = null;
-    let groupStageLocked = false; // once we go to knockout, groups become read-only
-
-    // ---------- INITIALIZE SCORES ----------
+    // Initialize all group scores to 0-0
     function initScores() {
         for (let g of GROUP_KEYS) {
             let matches = [];
@@ -321,7 +322,7 @@
     }
     initScores();
 
-    // ---------- COMPUTE STANDINGS (points, GF, GA, GD) ----------
+    // ---------- GROUP STANDINGS ----------
     function computeStandings() {
         let standings = {};
         for (let g of GROUP_KEYS) {
@@ -348,7 +349,7 @@
         return standings;
     }
 
-    // Get qualified teams (top2 + best 8 third)
+    // Get qualified: top2 + best 8 third
     function getQualifiedTeams(standings) {
         let allThird = [];
         for (let g of GROUP_KEYS) {
@@ -377,8 +378,8 @@
         return { qualified, bestThird: best8 };
     }
 
-    // Build knockout bracket (Round32)
-    function buildKnockout(qualifiedArray) {
+    // Build knockout bracket from seeded 32 teams
+    function buildKnockoutBracket(qualifiedArray) {
         if (qualifiedArray.length !== 32) return null;
         let r32 = [];
         for (let i = 0; i < 16; i++) {
@@ -396,38 +397,55 @@
         return { round32: r32, round16: r16, quarter: qf, semi: sf, final };
     }
 
-    // Propagate winners
+    // Propagate winners through the bracket
     function propagateKnockout(knock) {
         if (!knock) return;
-        let w32 = knock.round32.map(m => {
+        // R32 winners
+        let winners32 = knock.round32.map(m => {
             let s1 = m.team1.score, s2 = m.team2.score;
             if (s1 > s2) return m.team1;
             if (s2 > s1) return m.team2;
             return null;
         });
+        // R16
         knock.round16 = knock.round16.map((m, idx) => {
-            let t1 = w32[idx*2] || null;
-            let t2 = w32[idx*2+1] || null;
+            let t1 = winners32[idx*2] || null;
+            let t2 = winners32[idx*2+1] || null;
             return { ...m, team1: t1, team2: t2 };
         });
-        let w16 = knock.round16.map(m => (m.score1 > m.score2 ? m.team1 : (m.score2 > m.score1 ? m.team2 : null)));
+        let winners16 = knock.round16.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        // QF
         knock.quarter = knock.quarter.map((m, idx) => {
-            let t1 = w16[idx*2] || null;
-            let t2 = w16[idx*2+1] || null;
+            let t1 = winners16[idx*2] || null;
+            let t2 = winners16[idx*2+1] || null;
             return { ...m, team1: t1, team2: t2 };
         });
-        let wQ = knock.quarter.map(m => (m.score1 > m.score2 ? m.team1 : (m.score2 > m.score1 ? m.team2 : null)));
+        let winnersQ = knock.quarter.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        // SF
         knock.semi = knock.semi.map((m, idx) => {
-            let t1 = wQ[idx*2] || null;
-            let t2 = wQ[idx*2+1] || null;
+            let t1 = winnersQ[idx*2] || null;
+            let t2 = winnersQ[idx*2+1] || null;
             return { ...m, team1: t1, team2: t2 };
         });
-        let wS = knock.semi.map(m => (m.score1 > m.score2 ? m.team1 : (m.score2 > m.score1 ? m.team2 : null)));
-        knock.final.team1 = wS[0] || null;
-        knock.final.team2 = wS[1] || null;
+        let winnersS = knock.semi.map(m => {
+            if (m.score1 > m.score2) return m.team1;
+            if (m.score2 > m.score1) return m.team2;
+            return null;
+        });
+        // Final
+        knock.final.team1 = winnersS[0] || null;
+        knock.final.team2 = winnersS[1] || null;
     }
 
-    // ---------- RENDER GROUP STAGE (with flags & editable scores) ----------
+    // ---------- RENDER GROUP STAGE ----------
     function renderGroups() {
         const container = document.getElementById('groupsContainer');
         if (!container) return;
@@ -477,12 +495,12 @@
                 if (val < 0) val = 0;
                 if (side === 'home') matchScores[grp][midx].homeScore = val;
                 else matchScores[grp][midx].awayScore = val;
-                renderGroups(); // re-render with new standings
+                renderGroups(); // re-render with updated standings
             };
         });
     }
 
-    // ---------- RENDER KNOCKOUT STAGE ----------
+    // ---------- RENDER KNOCKOUT (with flags and editable scores) ----------
     function renderKnockout() {
         if (!knockoutData) return;
         const bracketDiv = document.getElementById('bracketContainer');
@@ -491,14 +509,14 @@
         const { bestThird } = getQualifiedTeams(standings);
         thirdDiv.innerHTML = `<strong>🏅 Best 8 third‑placed teams (advance to R32):</strong><br>` +
             bestThird.map(t => `▪️ <img class="team-flag" src="${getFlagUrl(t.team)}" style="width:22px;"> ${t.team} (Group ${t.group}) | Pts:${t.pts} | GD:${t.gd}`).join('<br>');
-        
+
         let html = `<div class="round-title">🔹 Round of 32</div>`;
         knockoutData.round32.forEach((m, i) => {
             html += `<div class="ko-match">
                         <div class="team-with-flag"><img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name} (${m.team1.group})</div>
-                        <input type="number" class="ko-score-input" data-round="32" data-idx="${i}" data-side="1" value="${m.team1.score}" min="0" style="width:65px">
+                        <input type="number" class="ko-score-input" data-round="32" data-idx="${i}" data-side="1" value="${m.team1.score}" min="0" step="1" style="width:65px">
                         <span>-</span>
-                        <input type="number" class="ko-score-input" data-round="32" data-idx="${i}" data-side="2" value="${m.team2.score}" min="0" style="width:65px">
+                        <input type="number" class="ko-score-input" data-round="32" data-idx="${i}" data-side="2" value="${m.team2.score}" min="0" step="1" style="width:65px">
                         <div class="team-with-flag"><img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name} (${m.team2.group})</div>
                     </div>`;
         });
@@ -506,9 +524,9 @@
         knockoutData.round16.forEach((m, i) => {
             html += `<div class="ko-match">
                         <span>${m.team1 ? `<img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}` : '—'}</span>
-                        <input type="number" class="ko-score-input" data-round="16" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="16" data-idx="${i}" data-side="1" value="${m.score1}" min="0" step="1" style="width:60px">
                         <span>-</span>
-                        <input type="number" class="ko-score-input" data-round="16" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="16" data-idx="${i}" data-side="2" value="${m.score2}" min="0" step="1" style="width:60px">
                         <span>${m.team2 ? `<img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}` : '—'}</span>
                     </div>`;
         });
@@ -516,9 +534,9 @@
         knockoutData.quarter.forEach((m, i) => {
             html += `<div class="ko-match">
                         <span>${m.team1 ? `<img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}` : '?'}</span>
-                        <input type="number" class="ko-score-input" data-round="qf" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="qf" data-idx="${i}" data-side="1" value="${m.score1}" min="0" step="1" style="width:60px">
                         <span>-</span>
-                        <input type="number" class="ko-score-input" data-round="qf" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="qf" data-idx="${i}" data-side="2" value="${m.score2}" min="0" step="1" style="width:60px">
                         <span>${m.team2 ? `<img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}` : '?'}</span>
                     </div>`;
         });
@@ -526,9 +544,9 @@
         knockoutData.semi.forEach((m, i) => {
             html += `<div class="ko-match">
                         <span>${m.team1 ? `<img class="team-flag" src="${getFlagUrl(m.team1.name)}"> ${m.team1.name}` : '—'}</span>
-                        <input type="number" class="ko-score-input" data-round="semi" data-idx="${i}" data-side="1" value="${m.score1}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="semi" data-idx="${i}" data-side="1" value="${m.score1}" min="0" step="1" style="width:60px">
                         <span>-</span>
-                        <input type="number" class="ko-score-input" data-round="semi" data-idx="${i}" data-side="2" value="${m.score2}" min="0" style="width:60px">
+                        <input type="number" class="ko-score-input" data-round="semi" data-idx="${i}" data-side="2" value="${m.score2}" min="0" step="1" style="width:60px">
                         <span>${m.team2 ? `<img class="team-flag" src="${getFlagUrl(m.team2.name)}"> ${m.team2.name}` : '—'}</span>
                     </div>`;
         });
@@ -536,12 +554,13 @@
         if (knockoutData.final) {
             html += `<div class="ko-match">
                         <span>${knockoutData.final.team1 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team1.name)}"> ${knockoutData.final.team1.name}` : '?'}</span>
-                        <input type="number" id="finalScore1" value="${knockoutData.final.score1}" min="0" style="width:60px">
+                        <input type="number" id="finalScore1" value="${knockoutData.final.score1}" min="0" step="1" style="width:60px">
                         <span>-</span>
-                        <input type="number" id="finalScore2" value="${knockoutData.final.score2}" min="0" style="width:60px">
+                        <input type="number" id="finalScore2" value="${knockoutData.final.score2}" min="0" step="1" style="width:60px">
                         <span>${knockoutData.final.team2 ? `<img class="team-flag" src="${getFlagUrl(knockoutData.final.team2.name)}"> ${knockoutData.final.team2.name}` : '?'}</span>
                     </div>`;
         }
+        // Determine champion if final scores exist
         if (knockoutData.final && knockoutData.final.score1 !== undefined && knockoutData.final.score2 !== undefined) {
             let winner = null;
             if (knockoutData.final.score1 > knockoutData.final.score2) winner = knockoutData.final.team1;
@@ -600,16 +619,15 @@
     // ---------- STEP LOGIC ----------
     function goToKnockout() {
         const standings = computeStandings();
-        const { qualified, bestThird } = getQualifiedTeams(standings);
+        const { qualified } = getQualifiedTeams(standings);
         if (qualified.length !== 32) {
-            alert(`Only ${qualified.length} teams qualified. Need exactly 32. Check group scores – every group must have clear top 2 + best third? Actually the system always produces 32 if all groups filled. Retry.`);
+            alert(`Error: Only ${qualified.length} teams qualified. Need exactly 32. Make sure all group scores are entered.`);
             return;
         }
         groupStageLocked = true;
-        knockoutData = buildKnockout(qualified);
-        if (!knockoutData) { alert("Error building bracket"); return; }
+        knockoutData = buildKnockoutBracket(qualified);
+        if (!knockoutData) { alert("Failed to build knockout bracket"); return; }
         propagateKnockout(knockoutData);
-        // Hide group stage UI, show knockout
         document.getElementById('groupStageSection').classList.add('hidden');
         document.getElementById('knockoutStageSection').classList.remove('hidden');
         renderKnockout();
@@ -629,7 +647,7 @@
     document.getElementById('backToGroupsBtn').addEventListener('click', resetToGroups);
     document.getElementById('resetEverythingBtn').addEventListener('click', resetToGroups);
 
-    // initial render
+    // Initial render
     renderGroups();
 </script>
 </body>
