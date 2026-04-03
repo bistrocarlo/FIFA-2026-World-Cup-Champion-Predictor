@@ -986,58 +986,24 @@
     }
 
     function buildKnockout(qualified){
-  const r32 = [];
-  for(let i = 0; i < 16; i++){
-    r32.push({
-      matchNo: 73 + i,
-      team1: qualified[i],
-      team2: qualified[31 - i],
-      winner: null
-    });
-  }
-
-  const r16 = Array.from({ length: 8 }, (_, i) => ({
-    matchNo: 89 + i,
-    team1: null,
-    team2: null,
-    winner: null
-  }));
-
-  const qf = Array.from({ length: 4 }, (_, i) => ({
-    matchNo: 97 + i,
-    team1: null,
-    team2: null,
-    winner: null
-  }));
-
-  const sf = Array.from({ length: 2 }, (_, i) => ({
-    matchNo: 101 + i,
-    team1: null,
-    team2: null,
-    winner: null
-  }));
-
-  const third = {
-    matchNo: 103,
-    team1: null,
-    team2: null,
-    winner: null
-  };
-
-  const final = {
-    matchNo: 104,
-    team1: null,
-    team2: null,
-    winner: null
-  };
-
-  return { r32, r16, qf, sf, third, final };
-}
+      const r32 = [];
+      for(let i=0;i<16;i++){
+        r32.push({
+          matchNo:i+1,
+          team1:qualified[i],
+          team2:qualified[31-i],
+          winner:null
+        });
+      }
 
       const r16 = Array.from({length:8}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
       const qf = Array.from({length:4}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
       const sf = Array.from({length:2}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
-      const third = {matchNo:
+      const third = {matchNo:1, team1:null, team2:null, winner:null};
+      const final = {matchNo:1, team1:null, team2:null, winner:null};
+
+      return {r32, r16, qf, sf, third, final};
+    }
 
     function propagateKnockout(k){
       const winners32 = k.r32.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
