@@ -279,13 +279,6 @@
       margin-top:6px;
     }
 
-    .section-title{
-      font-size:1.65rem;
-      font-weight:800;
-      letter-spacing:-0.03em;
-      margin-bottom:14px;
-    }
-
     .subtabs{
       display:flex;
       gap:18px;
@@ -908,11 +901,11 @@
               </div>
 
               <div class="score-area">
-                <select class="score-box" data-match="${m.matchNo}" data-side="home">
+                <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="home">
                   ${dropdownOptions(m.homeScore)}
                 </select>
                 <div class="dash">-</div>
-                <select class="score-box" data-match="${m.matchNo}" data-side="away">
+                <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="away">
                   ${dropdownOptions(m.awayScore)}
                 </select>
               </div>
@@ -929,12 +922,15 @@
 
       box.querySelectorAll(".score-box").forEach(sel => {
         sel.addEventListener("change", (e) => {
+          const group = e.target.dataset.group;
           const matchNo = Number(e.target.dataset.match);
           const side = e.target.dataset.side;
-          const match = allMatches.find(x => x.matchNo === matchNo);
+          const match = groupScores[group].find(x => x.matchNo === matchNo);
           if(!match) return;
+
           if(side === "home") match.homeScore = Number(e.target.value);
           else match.awayScore = Number(e.target.value);
+
           renderStandingsPanel();
           renderMatchesPanel();
         });
@@ -987,20 +983,49 @@
 
     function buildKnockout(qualified){
       const r32 = [];
-      for(let i=0;i<16;i++){
+      for(let i = 0; i < 16; i++){
         r32.push({
-          matchNo:i+1,
-          team1:qualified[i],
-          team2:qualified[31-i],
-          winner:null
+          matchNo: 73 + i,
+          team1: qualified[i],
+          team2: qualified[31 - i],
+          winner: null
         });
       }
 
-      const r16 = Array.from({length:8}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
-      const qf = Array.from({length:4}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
-      const sf = Array.from({length:2}, (_,i) => ({matchNo:i+1, team1:null, team2:null, winner:null}));
-      const third = {matchNo:1, team1:null, team2:null, winner:null};
-      const final = {matchNo:1, team1:null, team2:null, winner:null};
+      const r16 = Array.from({ length: 8 }, (_, i) => ({
+        matchNo: 89 + i,
+        team1: null,
+        team2: null,
+        winner: null
+      }));
+
+      const qf = Array.from({ length: 4 }, (_, i) => ({
+        matchNo: 97 + i,
+        team1: null,
+        team2: null,
+        winner: null
+      }));
+
+      const sf = Array.from({ length: 2 }, (_, i) => ({
+        matchNo: 101 + i,
+        team1: null,
+        team2: null,
+        winner: null
+      }));
+
+      const third = {
+        matchNo: 103,
+        team1: null,
+        team2: null,
+        winner: null
+      };
+
+      const final = {
+        matchNo: 104,
+        team1: null,
+        team2: null,
+        winner: null
+      };
 
       return {r32, r16, qf, sf, third, final};
     }
@@ -1207,6 +1232,8 @@
         knockoutData = null;
         document.getElementById("groupStageView").classList.remove("hidden");
         document.getElementById("knockoutView").classList.add("hidden");
+        document.getElementById("classicModeBtn").classList.add("active");
+        document.getElementById("bracketModeBtn").classList.remove("active");
         renderGroupTabs();
         renderProgressState();
       };
@@ -1216,6 +1243,8 @@
       document.getElementById("backToGroupsBtn").onclick = () => {
         document.getElementById("knockoutView").classList.add("hidden");
         document.getElementById("groupStageView").classList.remove("hidden");
+        document.getElementById("classicModeBtn").classList.add("active");
+        document.getElementById("bracketModeBtn").classList.remove("active");
       };
 
       document.getElementById("classicModeBtn").onclick = () => {
