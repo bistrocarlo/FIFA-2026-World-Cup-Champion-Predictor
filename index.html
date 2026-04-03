@@ -296,7 +296,7 @@
       <div class="worldcup-title">WORLD CUP <span class="year">2026</span></div>
       <div class="hosts">United States · Canada · Mexico</div>
     </div>
-    <button id="resetBtn" class="orange">⟳ Reset Tournament</button>
+    <button id="resetBtn" class="orange">Reset Tournament</button>
   </div>
 
   <div id="simulatorSection">
@@ -312,10 +312,10 @@
     <div id="currentMatchContainer" class="match-simulator"></div>
 
     <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 20px 0 10px;">
-      <button id="nextMatchBtn" class="green">▶ Next Match</button>
-      <button id="randomResultBtn" class="gray">🎲 Random Score</button>
-      <button id="autoCompleteBtn" class="orange">⚡ Complete Remaining</button>
-      <button id="toKnockoutBtn" class="blue" style="display:none;">🏆 Go to Knockout Stage</button>
+      <button id="nextMatchBtn" class="green">Next Match</button>
+      <button id="randomResultBtn" class="gray">Random Score</button>
+      <button id="autoCompleteBtn" class="orange">Complete Remaining</button>
+      <button id="toKnockoutBtn" class="blue" style="display:none;">Go to Knockout Stage</button>
     </div>
 
     <div id="liveStandings" class="groups-grid"></div>
@@ -325,7 +325,7 @@
     <div id="thirdPlacePanel" style="background:#f8f4e8; border-radius:24px; padding:18px; margin-bottom:20px;"></div>
     <div id="knockoutContainer"></div>
     <div style="text-align:center; margin-top:25px;">
-      <button id="backToSimulatorBtn" class="blue">← Back to Group Stage</button>
+      <button id="backToSimulatorBtn" class="blue">Back to Group Stage</button>
     </div>
   </div>
 </div>
@@ -562,9 +562,9 @@
       groupsHtml += `<div class="group-card"><div class="group-title">Group ${g}</div>
       <table class="standings-table"><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>`;
       rows.forEach((row, idx) => {
-        let medal = idx===0 ? "🥇" : (idx===1 ? "🥈" : (idx===2 ? "🥉" : ""));
+        let rankNumber = idx + 1;
         let cls = (idx===0 || idx===1) ? "qualified-row" : (idx===2 ? "third-qualified" : "");
-        groupsHtml += `<tr class="${cls}"><td>${medal}</td><td class="team-name-cell"><img class="flag" src="${getFlagUrl(row.team)}" style="width:22px;height:15px;"> ${row.team}</td>
+        groupsHtml += `<tr class="${cls}"><td>${rankNumber}</td><td class="team-name-cell"><img class="flag" src="${getFlagUrl(row.team)}" style="width:22px;height:15px;"> ${row.team}</td>
         <td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td>
         <td>${row.gf}</td><td>${row.ga}</td><td>${row.gd}</td><td><strong>${row.pts}</strong></td></tr>`;
       });
@@ -655,12 +655,12 @@
     }
     html += "<div class='round-title'>Round of 32</div>" + k.r32.map((m,i)=>renderMatch(m,i,"R32")).join("");
     html += "<div class='round-title'>Round of 16</div>" + k.r16.map((m,i)=>renderMatch(m,i,"R16")).join("");
-    html += "<div class='round-title'>Quarter‑finals</div>" + k.qf.map((m,i)=>renderMatch(m,i,"QF")).join("");
-    html += "<div class='round-title'>Semi‑finals</div>" + k.sf.map((m,i)=>renderMatch(m,i,"SF")).join("");
+    html += "<div class='round-title'>Quarter-finals</div>" + k.qf.map((m,i)=>renderMatch(m,i,"QF")).join("");
+    html += "<div class='round-title'>Semi-finals</div>" + k.sf.map((m,i)=>renderMatch(m,i,"SF")).join("");
     html += "<div class='round-title'>Third Place Playoff</div>" + renderMatch(k.third,0,"3rd");
     html += "<div class='round-title'>Final</div>" + renderMatch(k.final,0,"Final");
     if(k.final.winner) html += `<div class="champion-box">🏆 Champion: ${k.final.winner.team} 🏆</div>`;
-    if(k.third.winner) html += `<div class="third-place-box">🥉 Third place: ${k.third.winner.team}</div>`;
+    if(k.third.winner) html += `<div class="third-place-box">Third place: ${k.third.winner.team}</div>`;
     document.getElementById("knockoutContainer").innerHTML = html;
     document.querySelectorAll(".winner-btn").forEach(btn=>{
       btn.onclick = ()=>{
