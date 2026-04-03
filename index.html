@@ -890,9 +890,9 @@
     }
 
     function dropdownOptions(selected){
-      let html = "";
+      let html = `<option value="" ${selected === null ? "selected" : ""}></option>`;
       for(let i=0; i<=10; i++){
-        html += `<option value="${i}" ${Number(selected)===i ? "selected":""}>${i}</option>`;
+        html += `<option value="${i}" ${selected === i ? "selected" : ""}>${i}</option>`;
       }
       return html;
     }
@@ -959,10 +959,13 @@
           const matchNo = Number(sel.dataset.match);
           const side = sel.dataset.side;
           const match = groupScores[group].find(x => x.matchNo === matchNo);
+
           if(match){
-            if(side === "home") match.homeScore = Number(sel.value);
-            else match.awayScore = Number(sel.value);
+            const value = sel.value === "" ? null : Number(sel.value);
+            if(side === "home") match.homeScore = value;
+            else match.awayScore = value;
           }
+
           renderProgress();
           renderStandingsPanel();
           renderMatchesPanel();
