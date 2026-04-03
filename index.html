@@ -3,196 +3,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🏆 FIFA World Cup 2026 Live Simulator</title>
+  <title>FIFA World Cup 2026 Predictor</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #0a1f2e 0%, #0c2a3b 100%);
-      min-height: 100vh;
-      padding: 24px;
-      color: #f0f4fa;
+      background: #eef2f5;
+      padding: 30px 24px;
+      color: #1e2f3e;
     }
 
     .container {
       max-width: 1600px;
       margin: 0 auto;
-      background: rgba(255,255,255,0.97);
-      border-radius: 48px;
+      background: #ffffff;
+      border-radius: 28px;
       padding: 32px;
-      box-shadow: 0 30px 50px rgba(0,0,0,0.3);
-      backdrop-filter: blur(2px);
-      transition: all 0.3s;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     }
 
-    /* Header */
+    /* Header – classic */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      border-bottom: 4px solid #f5c542;
-      padding-bottom: 20px;
-      margin-bottom: 30px;
-    }
-    .logo-area {
-      display: flex;
-      flex-direction: column;
+      border-bottom: 2px solid #d4af37;
+      padding-bottom: 18px;
+      margin-bottom: 28px;
     }
     .fifa-logo {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      background: linear-gradient(135deg, #e31c25, #f5c542, #0033a0);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #1a3e6f;
     }
     .worldcup-title {
-      font-size: 2.4rem;
-      font-weight: 800;
-      line-height: 1.2;
-    }
-    .worldcup-title .fifa { color: #0033a0; }
-    .worldcup-title .year { color: #f5c542; }
-    .hosts {
-      background: #fef5e0;
-      color: #c0392b;
-      padding: 6px 18px;
-      border-radius: 60px;
+      font-size: 2rem;
       font-weight: 700;
-      font-size: 0.9rem;
-      margin-top: 8px;
-      display: inline-block;
+      color: #1a3e6f;
     }
-
+    .worldcup-title .year {
+      color: #c49a1c;
+    }
+    .hosts {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #b84c2c;
+      background: #f9f2e0;
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 30px;
+      margin-top: 6px;
+    }
     button {
       border: none;
-      border-radius: 60px;
-      padding: 12px 28px;
-      font-weight: 700;
+      border-radius: 40px;
+      padding: 10px 22px;
+      font-weight: 600;
       cursor: pointer;
       transition: 0.2s;
-      font-size: 0.95rem;
-      margin: 5px;
+      font-size: 0.9rem;
+      background: #e9ecef;
+      color: #1e3a5f;
     }
-    button:hover { transform: translateY(-3px); filter: brightness(0.96); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    button:hover {
+      background: #d4af37;
+      color: #1e2f47;
+      transform: translateY(-1px);
+    }
     .green { background: #1f7b4d; color: white; }
-    .orange { background: #e67e22; color: white; }
-    .blue { background: #0033a0; color: white; }
+    .green:hover { background: #16643e; }
+    .orange { background: #c95a0f; color: white; }
+    .orange:hover { background: #b04a08; }
+    .blue { background: #1a3e6f; color: white; }
     .gray { background: #5a6e7c; color: white; }
-    .gold { background: #f5c542; color: #1e2f47; }
 
     .note {
-      background: #fff3df;
-      border-left: 8px solid #f5c542;
-      border-radius: 28px;
-      padding: 18px 24px;
-      margin-bottom: 30px;
-      color: #1e3a5f;
-      font-weight: 600;
-      text-align: center;
+      background: #f8f4e8;
+      border-left: 5px solid #d4af37;
+      padding: 14px 20px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+      color: #2c4b6e;
     }
 
-    /* progress bar */
+    /* progress */
     .progress-container {
-      background: #e2e8f0;
-      border-radius: 40px;
-      height: 16px;
+      background: #e2e6ea;
+      border-radius: 30px;
+      height: 10px;
       margin: 20px 0;
-      overflow: hidden;
     }
     .progress-fill {
-      background: linear-gradient(90deg, #f5c542, #e31c25);
+      background: #d4af37;
       width: 0%;
       height: 100%;
-      transition: width 0.5s ease;
-      border-radius: 40px;
+      border-radius: 30px;
+      transition: width 0.3s;
     }
     .progress-text {
       text-align: center;
-      font-weight: 700;
-      margin-bottom: 10px;
+      font-weight: 600;
+      margin-bottom: 8px;
     }
 
-    /* match card */
+    /* match card – classic style */
     .match-simulator {
-      background: linear-gradient(145deg, #ffffff, #fef9ef);
-      border-radius: 48px;
-      padding: 32px;
+      background: #fefcf7;
+      border: 1px solid #e0cfaa;
+      border-radius: 32px;
+      padding: 28px;
       margin: 25px 0;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.1);
-      border: 1px solid #f5d471;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
     }
     .match-header {
       text-align: center;
-      font-weight: 800;
-      font-size: 1.2rem;
-      background: #0033a0;
-      display: inline-block;
-      padding: 8px 28px;
-      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: #1a3e6f;
       color: white;
-      margin-bottom: 25px;
-      width: auto;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 5px 0 #001a55;
+      display: inline-block;
+      padding: 6px 24px;
+      border-radius: 40px;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
     }
     .teams-sim {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 40px;
+      gap: 50px;
       flex-wrap: wrap;
     }
     .team-sim {
       text-align: center;
-      background: #f8fafd;
-      padding: 20px;
-      border-radius: 48px;
-      min-width: 220px;
-      transition: all 0.2s;
+      min-width: 200px;
     }
     .flag-sim {
-      width: 80px;
-      height: 55px;
+      width: 90px;
+      height: 60px;
       object-fit: cover;
-      border-radius: 16px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
       margin-bottom: 12px;
     }
-    .team-sim span {
-      font-weight: 800;
-      font-size: 1.2rem;
-      display: block;
-      margin: 12px 0;
+    .team-sim .country-name {
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 10px 0 8px 0;
+      color: #1a3e6f;
     }
     .score-select {
-      border: 2px solid #f5c542;
-      border-radius: 60px;
-      padding: 12px 16px;
-      font-size: 1.2rem;
-      font-weight: 800;
+      border: 1.5px solid #d4af37;
+      border-radius: 30px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      font-weight: 600;
       background: white;
-      cursor: pointer;
-      width: 100px;
+      width: 85px;
       text-align: center;
-      margin-top: 8px;
+      cursor: pointer;
+      margin-top: 5px;
     }
     .vs-icon {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #f5c542;
-      text-shadow: 2px 2px 0 #b87c00;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #7a6a3a;
+      padding: 0 10px;
     }
 
-    /* standings grid */
+    /* standings grid – clean tables */
     .groups-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -201,102 +188,102 @@
     }
     .group-card {
       background: #ffffff;
-      border-radius: 32px;
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-      transition: 0.2s;
-      border: 1px solid #ffe1a0;
+      border: 1px solid #e2d5b6;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
     .group-title {
-      background: linear-gradient(95deg, #0033a0, #1e4ba0);
-      color: white;
-      padding: 14px 20px;
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: 1px;
+      background: #f5f0e1;
+      color: #1a3e6f;
+      padding: 12px 18px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border-bottom: 1px solid #e0cfaa;
     }
     .standings-table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 0.8rem;
     }
     .standings-table th {
-      background: #fef5e0;
-      color: #7a5a07;
-      padding: 12px 8px;
-      font-size: 0.75rem;
+      background: #faf6ed;
+      color: #7a5d1a;
+      padding: 10px 5px;
+      font-weight: 600;
       text-align: center;
     }
     .standings-table td {
-      padding: 10px 6px;
+      padding: 8px 4px;
       text-align: center;
-      border-bottom: 1px solid #ffeac2;
-      font-weight: 500;
+      border-bottom: 1px solid #f0e5d2;
     }
     .team-name-cell {
       text-align: left;
-      font-weight: 700;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .qualified-row {
-      background: #e0f7e8;
-      font-weight: 800;
-      color: #0f5c2d;
+      background: #e8f3e6;
+      font-weight: 600;
+      color: #1f6e43;
     }
     .third-qualified {
-      background: #e3f0ff;
-      font-weight: 800;
-      color: #0033a0;
-    }
-    .rank-1, .rank-2, .rank-3 {
-      position: relative;
-    }
-    .medal {
-      font-size: 1rem;
-      margin-left: 4px;
+      background: #e3edf7;
+      font-weight: 600;
+      color: #1a3e6f;
     }
 
     /* knockout */
     .ko-match {
-      background: #ffffff;
-      border-radius: 28px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border-left: 6px solid #f5c542;
+      background: #fefcf7;
+      border-left: 5px solid #d4af37;
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
     }
     .winner-btn {
-      background: #f0f2f5;
-      border: 2px solid #f5c542;
-      border-radius: 60px;
-      padding: 8px 24px;
-      font-weight: 800;
+      background: #eef2f7;
+      border: 1px solid #d4af37;
+      border-radius: 40px;
+      padding: 6px 18px;
+      font-weight: 600;
       cursor: pointer;
     }
     .winner-btn.active {
-      background: #f5c542;
+      background: #d4af37;
       color: #1e2f47;
     }
     .hidden { display: none; }
     .champion-box, .third-place-box {
-      border-radius: 60px;
+      border-radius: 40px;
       text-align: center;
-      padding: 18px;
-      font-weight: 800;
+      padding: 14px;
+      font-weight: 700;
     }
     .champion-box {
-      background: linear-gradient(135deg, #f5c542, #ffdd88);
-      color: #1e3a5f;
-      font-size: 1.6rem;
+      background: #e9e1c7;
+      color: #1a3e6f;
+      font-size: 1.4rem;
+      margin-top: 20px;
     }
     .third-place-box {
-      background: #cbdde6;
-      font-size: 1.2rem;
-      margin-top: 15px;
+      background: #e9ecef;
+      margin-top: 12px;
     }
-    @media (max-width: 700px) {
-      .teams-sim { gap: 15px; }
-      .team-sim { min-width: 160px; }
+    .round-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 20px 0 10px;
+      color: #1a3e6f;
+      border-bottom: 2px solid #d4af37;
+      display: inline-block;
+    }
+    @media (max-width: 750px) {
+      .teams-sim { gap: 20px; }
+      .team-sim { min-width: 150px; }
       .groups-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -305,17 +292,17 @@
 <div class="container">
   <div class="header">
     <div>
-      <div class="fifa-logo">⚽ FIFA</div>
-      <div class="worldcup-title"><span class="fifa">WORLD CUP</span> <span class="year">2026</span></div>
-      <div class="hosts">🇺🇸 UNITED STATES • CANADA • MEXICO 🇨🇦🇲🇽</div>
+      <div class="fifa-logo">FIFA</div>
+      <div class="worldcup-title">WORLD CUP <span class="year">2026</span></div>
+      <div class="hosts">United States · Canada · Mexico</div>
     </div>
-    <button class="orange" id="resetBtn">🔄 Reset Tournament</button>
+    <button id="resetBtn" class="orange">⟳ Reset Tournament</button>
   </div>
 
   <div id="simulatorSection">
     <div class="note">
-      🎯 <strong>LIVE SIMULATOR – Chronological Order</strong><br>
-      Pick the score for each match using the dropdowns (0–10). Standings update instantly. Advance match by match.
+      <strong>Match Simulator – Chronological Order</strong><br>
+      Select the score for each match using the dropdowns (0–10). Standings update instantly. Advance match by match.
     </div>
     <div class="progress-text">
       <span id="progressCounter">0</span> / <span id="totalMatches">72</span> matches played
@@ -324,27 +311,29 @@
 
     <div id="currentMatchContainer" class="match-simulator"></div>
 
-    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 25px 0 15px;">
-      <button class="green" id="nextMatchBtn">▶️ NEXT MATCH</button>
-      <button class="gray" id="randomResultBtn">🎲 RANDOM SCORE</button>
-      <button class="orange" id="autoCompleteBtn">⚡ AUTO‑COMPUTE REMAINING</button>
-      <button class="blue" id="toKnockoutBtn" style="display:none;">🏆 LAUNCH KNOCKOUTS</button>
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 20px 0 10px;">
+      <button id="nextMatchBtn" class="green">▶ Next Match</button>
+      <button id="randomResultBtn" class="gray">🎲 Random Score</button>
+      <button id="autoCompleteBtn" class="orange">⚡ Complete Remaining</button>
+      <button id="toKnockoutBtn" class="blue" style="display:none;">🏆 Go to Knockout Stage</button>
     </div>
 
     <div id="liveStandings" class="groups-grid"></div>
   </div>
 
   <div id="knockoutSection" class="hidden">
-    <div id="thirdPlacePanel" class="panel" style="background:#fff3df; border-radius:32px; padding:20px; margin-bottom:25px;"></div>
+    <div id="thirdPlacePanel" style="background:#f8f4e8; border-radius:24px; padding:18px; margin-bottom:20px;"></div>
     <div id="knockoutContainer"></div>
-    <div class="center-actions" style="text-align:center; margin-top:25px;">
-      <button id="backToSimulatorBtn" class="blue">⬅️ Back to Simulator</button>
+    <div style="text-align:center; margin-top:25px;">
+      <button id="backToSimulatorBtn" class="blue">← Back to Group Stage</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ---------- GROUPS & FULL SCHEDULE (OFFICIAL 2026 - 72 MATCHES) ----------
+  // --------------------------------------------------------------
+  // GROUPS & FULL OFFICIAL SCHEDULE (72 matches)
+  // --------------------------------------------------------------
   const GROUPS = {
     A: ["Mexico","South Africa","South Korea","Czechia"],
     B: ["Canada","Bosnia and Herzegovina","Qatar","Switzerland"],
@@ -361,7 +350,6 @@
   };
   const GROUP_KEYS = Object.keys(GROUPS);
 
-  // Flag helper
   const flagMap = {
     "Mexico":"mx","South Africa":"za","South Korea":"kr","Czechia":"cz","Canada":"ca",
     "Bosnia and Herzegovina":"ba","Qatar":"qa","Switzerland":"ch","Brazil":"br","Morocco":"ma",
@@ -379,117 +367,113 @@
     return `https://flagcdn.com/w40/${code}.png`;
   }
 
-  // ---------- FULL MATCH LIST (chronological by matchNo) ----------
   let groupScores = {};
 
   function buildFullSchedule() {
-    // All 72 matches exactly as per official fixture (matchNo order)
     const schedule = {
       A: [
-        {matchNo:1, date:"Thu 11 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:0, awayIdx:1, group:"A"},
-        {matchNo:2, date:"Thu 11 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:2, awayIdx:3, group:"A"},
-        {matchNo:25, date:"Thu 18 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:3, awayIdx:1, group:"A"},
-        {matchNo:28, date:"Thu 18 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:0, awayIdx:2, group:"A"},
-        {matchNo:53, date:"Wed 24 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:3, awayIdx:0, group:"A"},
-        {matchNo:54, date:"Wed 24 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:1, awayIdx:2, group:"A"}
+        {matchNo:1, date:"Thu 11 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:0, awayIdx:1},
+        {matchNo:2, date:"Thu 11 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:2, awayIdx:3},
+        {matchNo:25, date:"Thu 18 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:3, awayIdx:1},
+        {matchNo:28, date:"Thu 18 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:0, awayIdx:2},
+        {matchNo:53, date:"Wed 24 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:3, awayIdx:0},
+        {matchNo:54, date:"Wed 24 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:1, awayIdx:2}
       ],
       B: [
-        {matchNo:3, date:"Fri 12 Jun", city:"Toronto", stadium:"BMO Field", homeIdx:0, awayIdx:1, group:"B"},
-        {matchNo:8, date:"Sat 13 Jun", city:"Santa Clara", stadium:"Levi's Stadium", homeIdx:2, awayIdx:3, group:"B"},
-        {matchNo:26, date:"Thu 18 Jun", city:"Los Angeles", stadium:"SoFi Stadium", homeIdx:3, awayIdx:1, group:"B"},
-        {matchNo:27, date:"Thu 18 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:0, awayIdx:2, group:"B"},
-        {matchNo:51, date:"Wed 24 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:0, group:"B"},
-        {matchNo:52, date:"Wed 24 Jun", city:"Seattle", stadium:"Lumen Field", homeIdx:1, awayIdx:2, group:"B"}
+        {matchNo:3, date:"Fri 12 Jun", city:"Toronto", stadium:"BMO Field", homeIdx:0, awayIdx:1},
+        {matchNo:8, date:"Sat 13 Jun", city:"Santa Clara", stadium:"Levi's Stadium", homeIdx:2, awayIdx:3},
+        {matchNo:26, date:"Thu 18 Jun", city:"Los Angeles", stadium:"SoFi Stadium", homeIdx:3, awayIdx:1},
+        {matchNo:27, date:"Thu 18 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:0, awayIdx:2},
+        {matchNo:51, date:"Wed 24 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:0},
+        {matchNo:52, date:"Wed 24 Jun", city:"Seattle", stadium:"Lumen Field", homeIdx:1, awayIdx:2}
       ],
       C: [
-        {matchNo:5, date:"Sat 13 Jun", city:"Boston", stadium:"Gillette", homeIdx:2, awayIdx:3, group:"C"},
-        {matchNo:7, date:"Sat 13 Jun", city:"New York", stadium:"MetLife", homeIdx:0, awayIdx:1, group:"C"},
-        {matchNo:29, date:"Fri 19 Jun", city:"Boston", stadium:"Gillette", homeIdx:0, awayIdx:2, group:"C"},
-        {matchNo:30, date:"Fri 19 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:1, awayIdx:2, group:"C"},
-        {matchNo:49, date:"Wed 24 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:0, group:"C"},
-        {matchNo:50, date:"Wed 24 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2, group:"C"}
+        {matchNo:5, date:"Sat 13 Jun", city:"Boston", stadium:"Gillette", homeIdx:2, awayIdx:3},
+        {matchNo:7, date:"Sat 13 Jun", city:"New York", stadium:"MetLife", homeIdx:0, awayIdx:1},
+        {matchNo:29, date:"Fri 19 Jun", city:"Boston", stadium:"Gillette", homeIdx:0, awayIdx:2},
+        {matchNo:30, date:"Fri 19 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:1, awayIdx:2},
+        {matchNo:49, date:"Wed 24 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:0},
+        {matchNo:50, date:"Wed 24 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2}
       ],
       D: [
-        {matchNo:4, date:"Fri 12 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:0, awayIdx:1, group:"D"},
-        {matchNo:6, date:"Sat 13 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:2, awayIdx:3, group:"D"},
-        {matchNo:31, date:"Fri 19 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:3, awayIdx:1, group:"D"},
-        {matchNo:32, date:"Fri 19 Jun", city:"Seattle", stadium:"Lumen", homeIdx:0, awayIdx:2, group:"D"},
-        {matchNo:59, date:"Thu 25 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:3, awayIdx:0, group:"D"},
-        {matchNo:60, date:"Thu 25 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:1, awayIdx:2, group:"D"}
+        {matchNo:4, date:"Fri 12 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:0, awayIdx:1},
+        {matchNo:6, date:"Sat 13 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:2, awayIdx:3},
+        {matchNo:31, date:"Fri 19 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:3, awayIdx:1},
+        {matchNo:32, date:"Fri 19 Jun", city:"Seattle", stadium:"Lumen", homeIdx:0, awayIdx:2},
+        {matchNo:59, date:"Thu 25 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:3, awayIdx:0},
+        {matchNo:60, date:"Thu 25 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:1, awayIdx:2}
       ],
       E: [
-        {matchNo:9, date:"Sun 14 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:2, awayIdx:3, group:"E"},
-        {matchNo:10, date:"Sun 14 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:1, group:"E"},
-        {matchNo:33, date:"Sat 20 Jun", city:"Toronto", stadium:"BMO", homeIdx:0, awayIdx:2, group:"E"},
-        {matchNo:34, date:"Sat 20 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:3, awayIdx:1, group:"E"},
-        {matchNo:55, date:"Thu 25 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2, group:"E"},
-        {matchNo:56, date:"Thu 25 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:0, group:"E"}
+        {matchNo:9, date:"Sun 14 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:2, awayIdx:3},
+        {matchNo:10, date:"Sun 14 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:1},
+        {matchNo:33, date:"Sat 20 Jun", city:"Toronto", stadium:"BMO", homeIdx:0, awayIdx:2},
+        {matchNo:34, date:"Sat 20 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:3, awayIdx:1},
+        {matchNo:55, date:"Thu 25 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2},
+        {matchNo:56, date:"Thu 25 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:0}
       ],
       F: [
-        {matchNo:11, date:"Sun 14 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:1, group:"F"},
-        {matchNo:12, date:"Sun 14 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:2, awayIdx:3, group:"F"},
-        {matchNo:35, date:"Sat 20 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:2, group:"F"},
-        {matchNo:36, date:"Sat 20 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:3, awayIdx:1, group:"F"},
-        {matchNo:57, date:"Thu 25 Jun", city:"Dallas", stadium:"AT&T", homeIdx:1, awayIdx:2, group:"F"},
-        {matchNo:58, date:"Thu 25 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:3, awayIdx:0, group:"F"}
+        {matchNo:11, date:"Sun 14 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:1},
+        {matchNo:12, date:"Sun 14 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:2, awayIdx:3},
+        {matchNo:35, date:"Sat 20 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:2},
+        {matchNo:36, date:"Sat 20 Jun", city:"Monterrey", stadium:"Estadio BBVA", homeIdx:3, awayIdx:1},
+        {matchNo:57, date:"Thu 25 Jun", city:"Dallas", stadium:"AT&T", homeIdx:1, awayIdx:2},
+        {matchNo:58, date:"Thu 25 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:3, awayIdx:0}
       ],
       G: [
-        {matchNo:15, date:"Mon 15 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:2, awayIdx:3, group:"G"},
-        {matchNo:16, date:"Mon 15 Jun", city:"Seattle", stadium:"Lumen", homeIdx:0, awayIdx:1, group:"G"},
-        {matchNo:37, date:"Sun 21 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:0, awayIdx:2, group:"G"},
-        {matchNo:39, date:"Sun 21 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:1, group:"G"},
-        {matchNo:63, date:"Fri 26 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:0, group:"G"},
-        {matchNo:64, date:"Fri 26 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:1, awayIdx:2, group:"G"}
+        {matchNo:15, date:"Mon 15 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:2, awayIdx:3},
+        {matchNo:16, date:"Mon 15 Jun", city:"Seattle", stadium:"Lumen", homeIdx:0, awayIdx:1},
+        {matchNo:37, date:"Sun 21 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:0, awayIdx:2},
+        {matchNo:39, date:"Sun 21 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:1},
+        {matchNo:63, date:"Fri 26 Jun", city:"Vancouver", stadium:"BC Place", homeIdx:3, awayIdx:0},
+        {matchNo:64, date:"Fri 26 Jun", city:"Los Angeles", stadium:"SoFi", homeIdx:1, awayIdx:2}
       ],
       H: [
-        {matchNo:13, date:"Mon 15 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:1, group:"H"},
-        {matchNo:14, date:"Mon 15 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:0, awayIdx:2, group:"H"},
-        {matchNo:37, date:"Sun 21 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:2, group:"H"},
-        {matchNo:38, date:"Sun 21 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:0, awayIdx:1, group:"H"},
-        {matchNo:65, date:"Fri 26 Jun", city:"Houston", stadium:"NRG", homeIdx:1, awayIdx:2, group:"H"},
-        {matchNo:66, date:"Fri 26 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:3, awayIdx:0, group:"H"}
+        {matchNo:13, date:"Mon 15 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:1},
+        {matchNo:14, date:"Mon 15 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:0, awayIdx:2},
+        {matchNo:37, date:"Sun 21 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:2},
+        {matchNo:38, date:"Sun 21 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:0, awayIdx:1},
+        {matchNo:65, date:"Fri 26 Jun", city:"Houston", stadium:"NRG", homeIdx:1, awayIdx:2},
+        {matchNo:66, date:"Fri 26 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:3, awayIdx:0}
       ],
       I: [
-        {matchNo:17, date:"Tue 16 Jun", city:"New York", stadium:"MetLife", homeIdx:0, awayIdx:1, group:"I"},
-        {matchNo:18, date:"Tue 16 Jun", city:"Boston", stadium:"Gillette", homeIdx:2, awayIdx:3, group:"I"},
-        {matchNo:41, date:"Mon 22 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:1, group:"I"},
-        {matchNo:42, date:"Mon 22 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:0, awayIdx:2, group:"I"},
-        {matchNo:61, date:"Fri 26 Jun", city:"Boston", stadium:"Gillette", homeIdx:3, awayIdx:0, group:"I"},
-        {matchNo:62, date:"Fri 26 Jun", city:"Toronto", stadium:"BMO", homeIdx:1, awayIdx:2, group:"I"}
+        {matchNo:17, date:"Tue 16 Jun", city:"New York", stadium:"MetLife", homeIdx:0, awayIdx:1},
+        {matchNo:18, date:"Tue 16 Jun", city:"Boston", stadium:"Gillette", homeIdx:2, awayIdx:3},
+        {matchNo:41, date:"Mon 22 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:1},
+        {matchNo:42, date:"Mon 22 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:0, awayIdx:2},
+        {matchNo:61, date:"Fri 26 Jun", city:"Boston", stadium:"Gillette", homeIdx:3, awayIdx:0},
+        {matchNo:62, date:"Fri 26 Jun", city:"Toronto", stadium:"BMO", homeIdx:1, awayIdx:2}
       ],
       J: [
-        {matchNo:19, date:"Tue 16 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:0, awayIdx:1, group:"J"},
-        {matchNo:20, date:"Tue 16 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:2, awayIdx:3, group:"J"},
-        {matchNo:43, date:"Mon 22 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:2, group:"J"},
-        {matchNo:44, date:"Mon 22 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:3, awayIdx:1, group:"J"},
-        {matchNo:69, date:"Sat 27 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:1, awayIdx:2, group:"J"},
-        {matchNo:70, date:"Sat 27 Jun", city:"Dallas", stadium:"AT&T", homeIdx:3, awayIdx:0, group:"J"}
+        {matchNo:19, date:"Tue 16 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:0, awayIdx:1},
+        {matchNo:20, date:"Tue 16 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:2, awayIdx:3},
+        {matchNo:43, date:"Mon 22 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:2},
+        {matchNo:44, date:"Mon 22 Jun", city:"San Francisco", stadium:"Levi's", homeIdx:3, awayIdx:1},
+        {matchNo:69, date:"Sat 27 Jun", city:"Kansas City", stadium:"Arrowhead", homeIdx:1, awayIdx:2},
+        {matchNo:70, date:"Sat 27 Jun", city:"Dallas", stadium:"AT&T", homeIdx:3, awayIdx:0}
       ],
       K: [
-        {matchNo:21, date:"Wed 17 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:1, group:"K"},
-        {matchNo:23, date:"Wed 17 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:2, awayIdx:3, group:"K"},
-        {matchNo:47, date:"Tue 23 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:2, group:"K"},
-        {matchNo:48, date:"Tue 23 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:3, awayIdx:1, group:"K"},
-        {matchNo:71, date:"Sat 27 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:0, group:"K"},
-        {matchNo:72, date:"Sat 27 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:1, awayIdx:2, group:"K"}
+        {matchNo:21, date:"Wed 17 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:1},
+        {matchNo:23, date:"Wed 17 Jun", city:"Mexico City", stadium:"Estadio Azteca", homeIdx:2, awayIdx:3},
+        {matchNo:47, date:"Tue 23 Jun", city:"Houston", stadium:"NRG", homeIdx:0, awayIdx:2},
+        {matchNo:48, date:"Tue 23 Jun", city:"Guadalajara", stadium:"Estadio Akron", homeIdx:3, awayIdx:1},
+        {matchNo:71, date:"Sat 27 Jun", city:"Miami", stadium:"Hard Rock", homeIdx:3, awayIdx:0},
+        {matchNo:72, date:"Sat 27 Jun", city:"Atlanta", stadium:"Mercedes-Benz", homeIdx:1, awayIdx:2}
       ],
       L: [
-        {matchNo:22, date:"Wed 17 Jun", city:"Toronto", stadium:"BMO", homeIdx:2, awayIdx:3, group:"L"},
-        {matchNo:24, date:"Wed 17 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:1, group:"L"},
-        {matchNo:45, date:"Tue 23 Jun", city:"Boston", stadium:"Gillette", homeIdx:0, awayIdx:2, group:"L"},
-        {matchNo:46, date:"Tue 23 Jun", city:"Toronto", stadium:"BMO", homeIdx:3, awayIdx:1, group:"L"},
-        {matchNo:67, date:"Sat 27 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:0, group:"L"},
-        {matchNo:68, date:"Sat 27 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2, group:"L"}
+        {matchNo:22, date:"Wed 17 Jun", city:"Toronto", stadium:"BMO", homeIdx:2, awayIdx:3},
+        {matchNo:24, date:"Wed 17 Jun", city:"Dallas", stadium:"AT&T", homeIdx:0, awayIdx:1},
+        {matchNo:45, date:"Tue 23 Jun", city:"Boston", stadium:"Gillette", homeIdx:0, awayIdx:2},
+        {matchNo:46, date:"Tue 23 Jun", city:"Toronto", stadium:"BMO", homeIdx:3, awayIdx:1},
+        {matchNo:67, date:"Sat 27 Jun", city:"New York", stadium:"MetLife", homeIdx:3, awayIdx:0},
+        {matchNo:68, date:"Sat 27 Jun", city:"Philadelphia", stadium:"Lincoln Financial", homeIdx:1, awayIdx:2}
       ]
     };
-    // Initialize scores
     for(let g of GROUP_KEYS) {
-      groupScores[g] = schedule[g].map(m => ({ ...m, homeScore:0, awayScore:0 }));
+      groupScores[g] = schedule[g].map(m => ({ ...m, homeScore:0, awayScore:0, group:g }));
     }
   }
   buildFullSchedule();
 
-  // Flatten matches in chronological order
   let allMatches = [];
   function flattenMatches() {
     allMatches = [];
@@ -503,14 +487,12 @@
   let currentMatchIdx = 0;
   let knockoutData = null;
 
-  // Helper dropdown options
   function dropdownOptions(selected) {
     let opts = '';
     for(let i=0; i<=10; i++) opts += `<option value="${i}" ${selected==i ? 'selected':''}>${i}</option>`;
     return opts;
   }
 
-  // compute standings
   function computeStandings() {
     let standings = {};
     for(let g of GROUP_KEYS) {
@@ -532,40 +514,36 @@
     return standings;
   }
 
-  // render current match with dropdowns
   function renderCurrentMatch() {
     if(currentMatchIdx >= allMatches.length) {
       document.getElementById("toKnockoutBtn").style.display = "inline-block";
-      document.getElementById("currentMatchContainer").innerHTML = "<div style='text-align:center; padding:40px;'>✨ All group matches completed! ✨<br>Click 'LAUNCH KNOCKOUTS' to begin the bracket.</div>";
+      document.getElementById("currentMatchContainer").innerHTML = "<div style='text-align:center; padding:30px;'>All group matches completed. Click 'Go to Knockout Stage'.</div>";
       return;
     }
     const m = allMatches[currentMatchIdx];
     const homeTeam = GROUPS[m.group][m.homeIdx];
     const awayTeam = GROUPS[m.group][m.awayIdx];
-    const homeScoreVal = m.homeScore;
-    const awayScoreVal = m.awayScore;
     const html = `
-      <div class="match-header">🎯 MATCH ${m.matchNo} • ${m.date} • ${m.city} • ${m.stadium}</div>
+      <div class="match-header">Match ${m.matchNo} · ${m.date} · ${m.city} · ${m.stadium}</div>
       <div class="teams-sim">
         <div class="team-sim">
-          <img class="flag-sim" src="${getFlagUrl(homeTeam)}">
-          <span>${homeTeam}</span>
+          <img class="flag-sim" src="${getFlagUrl(homeTeam)}" alt="flag">
+          <div class="country-name">${homeTeam}</div>
           <select id="homeScoreSelect" class="score-select">
-            ${dropdownOptions(homeScoreVal)}
+            ${dropdownOptions(m.homeScore)}
           </select>
         </div>
-        <div class="vs-icon">⚡ VS ⚡</div>
+        <div class="vs-icon">VS</div>
         <div class="team-sim">
-          <img class="flag-sim" src="${getFlagUrl(awayTeam)}">
-          <span>${awayTeam}</span>
+          <img class="flag-sim" src="${getFlagUrl(awayTeam)}" alt="flag">
+          <div class="country-name">${awayTeam}</div>
           <select id="awayScoreSelect" class="score-select">
-            ${dropdownOptions(awayScoreVal)}
+            ${dropdownOptions(m.awayScore)}
           </select>
         </div>
       </div>
     `;
     document.getElementById("currentMatchContainer").innerHTML = html;
-    // attach events
     document.getElementById("homeScoreSelect").addEventListener("change", (e) => {
       m.homeScore = parseInt(e.target.value);
       renderLiveStandings();
@@ -576,7 +554,6 @@
     });
   }
 
-  // beautiful standings render
   function renderLiveStandings() {
     const standings = computeStandings();
     let groupsHtml = "";
@@ -586,10 +563,8 @@
       <table class="standings-table"><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>`;
       rows.forEach((row, idx) => {
         let medal = idx===0 ? "🥇" : (idx===1 ? "🥈" : (idx===2 ? "🥉" : ""));
-        let cls = "";
-        if(idx===0 || idx===1) cls = "qualified-row";
-        else if(idx===2) cls = "third-qualified";
-        groupsHtml += `<tr class="${cls}"><td>${medal}</td><td class="team-name-cell"><img class="flag" src="${getFlagUrl(row.team)}" style="width:24px;height:16px;">${row.team}</td>
+        let cls = (idx===0 || idx===1) ? "qualified-row" : (idx===2 ? "third-qualified" : "");
+        groupsHtml += `<tr class="${cls}"><td>${medal}</td><td class="team-name-cell"><img class="flag" src="${getFlagUrl(row.team)}" style="width:22px;height:15px;"> ${row.team}</td>
         <td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td>
         <td>${row.gf}</td><td>${row.ga}</td><td>${row.gd}</td><td><strong>${row.pts}</strong></td></tr>`;
       });
@@ -602,7 +577,7 @@
     document.getElementById("progressFill").style.width = `${(played/allMatches.length)*100}%`;
   }
 
-  // actions
+  // Navigation
   document.getElementById("nextMatchBtn").onclick = () => {
     if(currentMatchIdx < allMatches.length) currentMatchIdx++;
     renderCurrentMatch();
@@ -619,8 +594,8 @@
   };
   document.getElementById("autoCompleteBtn").onclick = () => {
     for(let i=currentMatchIdx; i<allMatches.length; i++) {
-      allMatches[i].homeScore = Math.floor(Math.random()*4);
-      allMatches[i].awayScore = Math.floor(Math.random()*4);
+      allMatches[i].homeScore = Math.floor(Math.random()*5);
+      allMatches[i].awayScore = Math.floor(Math.random()*5);
     }
     currentMatchIdx = allMatches.length;
     renderCurrentMatch();
@@ -629,7 +604,7 @@
   };
   document.getElementById("resetBtn").onclick = () => location.reload();
 
-  // Knockout logic (winner picks, third place)
+  // Knockout logic
   function getQualifiedTeams(standings) {
     let thirds = [];
     for(let g of GROUP_KEYS) thirds.push({...standings[g][2], group:g});
@@ -645,7 +620,6 @@
     qualified.sort((a,b)=>b.pts-a.pts || b.gd-a.gd || b.gf-a.gf);
     return qualified;
   }
-  // build knockout
   function buildKnockout(qualified) {
     let r32 = [];
     for(let i=0;i<16;i++) r32.push({team1:qualified[i], team2:qualified[31-i], winner:null});
@@ -673,30 +647,30 @@
     function renderMatch(m, idx, roundName) {
       if(!m) return "";
       let t1 = m.team1, t2 = m.team2;
-      return `<div class="ko-match"><div class="ko-top">${roundName} ${idx+1}</div><div class="ko-buttons">
-        <button class="winner-btn ${m.winner===1?'active':''}" data-round="${roundName}" data-idx="${idx}" data-choice="1">${t1?`<img class="flag" src="${getFlagUrl(t1.team)}" style="width:22px;"> ${t1.team}`:'—'}</button>
+      return `<div class="ko-match"><div class="ko-top"><strong>${roundName} ${idx+1}</strong></div><div class="ko-buttons" style="display:flex; gap:15px; justify-content:center;">
+        <button class="winner-btn ${m.winner===t1 ? 'active':''}" data-round="${roundName}" data-idx="${idx}" data-choice="1">${t1?`<img class="flag" src="${getFlagUrl(t1.team)}" style="width:22px;"> ${t1.team}`:'—'}</button>
         <span>VS</span>
-        <button class="winner-btn ${m.winner===2?'active':''}" data-round="${roundName}" data-idx="${idx}" data-choice="2">${t2?`<img class="flag" src="${getFlagUrl(t2.team)}" style="width:22px;"> ${t2.team}`:'—'}</button>
+        <button class="winner-btn ${m.winner===t2 ? 'active':''}" data-round="${roundName}" data-idx="${idx}" data-choice="2">${t2?`<img class="flag" src="${getFlagUrl(t2.team)}" style="width:22px;"> ${t2.team}`:'—'}</button>
       </div></div>`;
     }
-    html += "<div class='round-title'>🏆 ROUND OF 32</div>" + k.r32.map((m,i)=>renderMatch(m,i,"r32")).join("");
-    html += "<div class='round-title'>🔹 ROUND OF 16</div>" + k.r16.map((m,i)=>renderMatch(m,i,"r16")).join("");
-    html += "<div class='round-title'>🔸 QUARTER-FINALS</div>" + k.qf.map((m,i)=>renderMatch(m,i,"qf")).join("");
-    html += "<div class='round-title'>⚡ SEMI-FINALS</div>" + k.sf.map((m,i)=>renderMatch(m,i,"sf")).join("");
-    html += "<div class='round-title'>🥉 THIRD PLACE</div>" + renderMatch(k.third,0,"third");
-    html += "<div class='round-title'>🏆 FINAL</div>" + renderMatch(k.final,0,"final");
-    if(k.final.winner) html += `<div class="champion-box">🏆 WORLD CHAMPION: ${k.final.winner.team} 🏆</div>`;
+    html += "<div class='round-title'>Round of 32</div>" + k.r32.map((m,i)=>renderMatch(m,i,"R32")).join("");
+    html += "<div class='round-title'>Round of 16</div>" + k.r16.map((m,i)=>renderMatch(m,i,"R16")).join("");
+    html += "<div class='round-title'>Quarter‑finals</div>" + k.qf.map((m,i)=>renderMatch(m,i,"QF")).join("");
+    html += "<div class='round-title'>Semi‑finals</div>" + k.sf.map((m,i)=>renderMatch(m,i,"SF")).join("");
+    html += "<div class='round-title'>Third Place Playoff</div>" + renderMatch(k.third,0,"3rd");
+    html += "<div class='round-title'>Final</div>" + renderMatch(k.final,0,"Final");
+    if(k.final.winner) html += `<div class="champion-box">🏆 Champion: ${k.final.winner.team} 🏆</div>`;
     if(k.third.winner) html += `<div class="third-place-box">🥉 Third place: ${k.third.winner.team}</div>`;
     document.getElementById("knockoutContainer").innerHTML = html;
     document.querySelectorAll(".winner-btn").forEach(btn=>{
       btn.onclick = ()=>{
         let round = btn.dataset.round, idx = parseInt(btn.dataset.idx), choice = parseInt(btn.dataset.choice);
         let target;
-        if(round==="r32") target = knockoutData.r32[idx];
-        else if(round==="r16") target = knockoutData.r16[idx];
-        else if(round==="qf") target = knockoutData.qf[idx];
-        else if(round==="sf") target = knockoutData.sf[idx];
-        else if(round==="third") target = knockoutData.third;
+        if(round==="R32") target = knockoutData.r32[idx];
+        else if(round==="R16") target = knockoutData.r16[idx];
+        else if(round==="QF") target = knockoutData.qf[idx];
+        else if(round==="SF") target = knockoutData.sf[idx];
+        else if(round==="3rd") target = knockoutData.third;
         else target = knockoutData.final;
         if(target && ((choice===1 && target.team1) || (choice===2 && target.team2))) target.winner = choice===1?target.team1:target.team2;
         propagate(knockoutData);
@@ -708,14 +682,14 @@
   document.getElementById("toKnockoutBtn").onclick = () => {
     const standings = computeStandings();
     const qualified = getQualifiedTeams(standings);
-    if(qualified.length !== 32) { alert(`Only ${qualified.length} teams qualified. Need 32.`); return; }
+    if(qualified.length !== 32) { alert(`Only ${qualified.length} teams qualified. Need exactly 32.`); return; }
     knockoutData = buildKnockout(qualified);
     propagate(knockoutData);
     document.getElementById("simulatorSection").classList.add("hidden");
     document.getElementById("knockoutSection").classList.remove("hidden");
     renderKnockoutUI(knockoutData);
     const bestThirds = getQualifiedTeams(standings).slice(0,8);
-    document.getElementById("thirdPlacePanel").innerHTML = `<strong>🏅 Best 8 third-placed teams</strong><br>${bestThirds.map(t=>`${t.team} (${t.group}) · ${t.pts}pts`).join(' · ')}`;
+    document.getElementById("thirdPlacePanel").innerHTML = `<strong>Best 8 third‑placed teams (advanced)</strong><br>${bestThirds.map(t=>`${t.team} (${t.group}) · ${t.pts} pts`).join(' · ')}`;
   };
   document.getElementById("backToSimulatorBtn").onclick = () => {
     document.getElementById("simulatorSection").classList.remove("hidden");
@@ -723,7 +697,6 @@
     renderLiveStandings();
   };
 
-  // initial render
   renderCurrentMatch();
   renderLiveStandings();
 </script>
