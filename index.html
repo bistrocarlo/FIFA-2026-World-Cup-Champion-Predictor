@@ -27,7 +27,6 @@
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     }
 
-    /* Header – classic */
     .header {
       display: flex;
       justify-content: space-between;
@@ -94,7 +93,6 @@
       color: #2c4b6e;
     }
 
-    /* progress */
     .progress-container {
       background: #e2e6ea;
       border-radius: 30px;
@@ -114,7 +112,6 @@
       margin-bottom: 8px;
     }
 
-    /* match card – classic style */
     .match-simulator {
       background: #fefcf7;
       border: 1px solid #e0cfaa;
@@ -179,7 +176,6 @@
       padding: 0 10px;
     }
 
-    /* standings grid – clean tables */
     .groups-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -236,7 +232,6 @@
       color: #1a3e6f;
     }
 
-    /* knockout */
     .ko-match {
       background: #fefcf7;
       border-left: 5px solid #d4af37;
@@ -367,6 +362,7 @@
     return `https://flagcdn.com/w40/${code}.png`;
   }
 
+  // ---------- BUILD INITIAL SCHEDULE ----------
   let groupScores = {};
 
   function buildFullSchedule() {
@@ -474,15 +470,19 @@
   }
   buildFullSchedule();
 
+  // ---------- BUILD FLAT LIST OF REFERENCES (CRITICAL FIX) ----------
   let allMatches = [];
-  function flattenMatches() {
+  function buildMatchesList() {
     allMatches = [];
-    GROUP_KEYS.forEach(g => {
-      groupScores[g].forEach(m => allMatches.push({ group: g, ...m }));
-    });
+    for(let g of GROUP_KEYS) {
+      for(let match of groupScores[g]) {
+        // store direct reference, not a copy
+        allMatches.push(match);
+      }
+    }
     allMatches.sort((a,b) => a.matchNo - b.matchNo);
   }
-  flattenMatches();
+  buildMatchesList();
 
   let currentMatchIdx = 0;
   let knockoutData = null;
@@ -493,6 +493,7 @@
     return opts;
   }
 
+  // ---------- STANDINGS CALCULATION (USES groupScores) ----------
   function computeStandings() {
     let standings = {};
     for(let g of GROUP_KEYS) {
@@ -514,6 +515,7 @@
     return standings;
   }
 
+  // ---------- RENDER CURRENT MATCH (WITH DROPDOWNS) ----------
   function renderCurrentMatch() {
     if(currentMatchIdx >= allMatches.length) {
       document.getElementById("toKnockoutBtn").style.display = "inline-block";
@@ -554,6 +556,7 @@
     });
   }
 
+  // ---------- RENDER STANDINGS (BEAUTIFUL, WITH NUMBERS 1,2,3...) ----------
   function renderLiveStandings() {
     const standings = computeStandings();
     let groupsHtml = "";
@@ -577,7 +580,7 @@
     document.getElementById("progressFill").style.width = `${(played/allMatches.length)*100}%`;
   }
 
-  // Navigation
+  // ---------- BUTTON ACTIONS ----------
   document.getElementById("nextMatchBtn").onclick = () => {
     if(currentMatchIdx < allMatches.length) currentMatchIdx++;
     renderCurrentMatch();
@@ -604,7 +607,7 @@
   };
   document.getElementById("resetBtn").onclick = () => location.reload();
 
-  // Knockout logic
+  // ---------- KNOCKOUT LOGIC (unchanged, but uses correct standings) ----------
   function getQualifiedTeams(standings) {
     let thirds = [];
     for(let g of GROUP_KEYS) thirds.push({...standings[g][2], group:g});
@@ -697,6 +700,7 @@
     renderLiveStandings();
   };
 
+  // INITIAL RENDER
   renderCurrentMatch();
   renderLiveStandings();
 </script>
