@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>WC 2026 Predictor</title>
   <style>
     :root{
@@ -35,20 +35,21 @@
     }
 
     .app-icon{
-      width:120px;
-      height:120px;
+      width:80px;
+      height:80px;
       background:linear-gradient(135deg, #1e90ff, #00bfff);
-      border-radius:28px;
+      border-radius:20px;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 8px 25px rgba(30,144,255,.3);
+      box-shadow:0 8px 20px rgba(30,144,255,.3);
       flex-shrink:0;
     }
 
-    .app-icon img{
-      width:72px;
-      height:72px;
+    .app-icon svg{
+      width:48px;
+      height:48px;
+      fill:white;
     }
 
     .hero-info h1{
@@ -131,6 +132,8 @@
       color:var(--muted);
       white-space:nowrap;
       border-bottom:3px solid transparent;
+      background:none;
+      cursor:pointer;
     }
 
     .group-tab.active{
@@ -156,7 +159,7 @@
       box-shadow:var(--shadow);
     }
 
-    /* Match cards */
+    /* Match cards - FIXED: no overlap */
     .match-card{
       background:var(--soft);
       border-radius:16px;
@@ -173,10 +176,11 @@
     }
 
     .match-row{
-      display:grid;
-      grid-template-columns:1fr 90px 1fr;
+      display:flex;
+      flex-wrap:wrap;
       align-items:center;
-      gap:12px;
+      justify-content:center;
+      gap:16px;
     }
 
     .team-block{
@@ -184,11 +188,13 @@
       flex-direction:column;
       align-items:center;
       text-align:center;
+      min-width:100px;
+      flex:1;
     }
 
     .team-flag{
-      width:64px;
-      height:64px;
+      width:56px;
+      height:56px;
       border-radius:50%;
       object-fit:cover;
       border:2px solid #fff;
@@ -197,17 +203,22 @@
     }
 
     .team-name{
-      font-size:15px;
+      font-size:14px;
       font-weight:700;
       line-height:1.2;
+      max-width:100px;
+      word-break:break-word;
     }
 
     .score-area{
       display:flex;
       align-items:center;
       gap:8px;
-      font-size:28px;
-      font-weight:300;
+      background:white;
+      padding:6px 12px;
+      border-radius:40px;
+      box-shadow:0 1px 3px rgba(0,0,0,.1);
+      flex-shrink:0;
     }
 
     .score-box{
@@ -219,6 +230,31 @@
       text-align:center;
       font-size:24px;
       font-weight:400;
+      cursor:pointer;
+    }
+
+    @media (max-width: 640px){
+      .match-row{
+        flex-direction:column;
+      }
+      .team-block{
+        flex-direction:row;
+        gap:12px;
+        width:100%;
+        justify-content:center;
+      }
+      .team-flag{
+        width:44px;
+        height:44px;
+        margin-bottom:0;
+      }
+      .team-name{
+        font-size:16px;
+      }
+      .score-area{
+        order:2;
+        margin:8px 0;
+      }
     }
 
     /* Standings */
@@ -243,16 +279,40 @@
       font-weight:700;
     }
 
+    .subtabs{
+      display:flex;
+      gap:12px;
+      margin-bottom:16px;
+      border-bottom:1px solid #e5e5ea;
+    }
+
+    .subtab{
+      background:none;
+      padding:8px 0;
+      font-weight:600;
+      color:var(--muted);
+      border-bottom:2px solid transparent;
+      border-radius:0;
+    }
+
+    .subtab.active{
+      color:var(--blue);
+      border-bottom-color:var(--blue);
+    }
+
     .hidden{ display:none !important; }
   </style>
 </head>
 <body>
   <div class="app-shell">
 
-    <!-- App Store Style Hero -->
+    <!-- Hero with inline SVG (no broken image) -->
     <div class="hero">
       <div class="app-icon">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Soccer_ball.svg/512px-Soccer_ball.svg.png" alt="WC 2026">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
+          <circle cx="12" cy="12" r="2"/>
+        </svg>
       </div>
       <div class="hero-info">
         <h1>WC 2026 Predictor</h1>
@@ -291,7 +351,7 @@
       </div>
     </div>
 
-    <!-- Knockout View -->
+    <!-- Knockout View (placeholder) -->
     <div id="knockoutView" class="hidden">
       <div class="panel">
         <div id="bestThirdsPanel"></div>
@@ -546,66 +606,6 @@
       return qualified;
     }
 
-    function buildKnockout(qualified){
-      const r32 = [];
-      for(let i = 0; i < 16; i++){
-        r32.push({
-          matchNo: 73 + i,
-          team1: qualified[i],
-          team2: qualified[31 - i],
-          winner: null
-        });
-      }
-
-      const r16 = Array.from({length:8}, (_,i) => ({matchNo:89+i, team1:null, team2:null, winner:null}));
-      const qf = Array.from({length:4}, (_,i) => ({matchNo:97+i, team1:null, team2:null, winner:null}));
-      const sf = Array.from({length:2}, (_,i) => ({matchNo:101+i, team1:null, team2:null, winner:null}));
-      const third = {matchNo:103, team1:null, team2:null, winner:null};
-      const final = {matchNo:104, team1:null, team2:null, winner:null};
-
-      return {r32, r16, qf, sf, third, final};
-    }
-
-    function propagateKnockout(k){
-      const winners32 = k.r32.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-
-      for(let i=0; i<k.r16.length; i++){
-        k.r16[i].team1 = winners32[i*2] || null;
-        k.r16[i].team2 = winners32[i*2+1] || null;
-        if(k.r16[i].winner && ![k.r16[i].team1, k.r16[i].team2].includes(k.r16[i].winner)) k.r16[i].winner = null;
-      }
-
-      const winners16 = k.r16.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-
-      for(let i=0; i<k.qf.length; i++){
-        k.qf[i].team1 = winners16[i*2] || null;
-        k.qf[i].team2 = winners16[i*2+1] || null;
-        if(k.qf[i].winner && ![k.qf[i].team1, k.qf[i].team2].includes(k.qf[i].winner)) k.qf[i].winner = null;
-      }
-
-      const winnersQF = k.qf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-
-      for(let i=0; i<k.sf.length; i++){
-        k.sf[i].team1 = winnersQF[i*2] || null;
-        k.sf[i].team2 = winnersQF[i*2+1] || null;
-        if(k.sf[i].winner && ![k.sf[i].team1, k.sf[i].team2].includes(k.sf[i].winner)) k.sf[i].winner = null;
-      }
-
-      const winnersSF = k.sf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-      const losersSF = k.sf.map(m => {
-        if(!m.team1 || !m.team2 || !m.winner) return null;
-        return m.winner === m.team1 ? m.team2 : m.team1;
-      });
-
-      k.third.team1 = losersSF[0] || null;
-      k.third.team2 = losersSF[1] || null;
-      if(k.third.winner && ![k.third.team1, k.third.team2].includes(k.third.winner)) k.third.winner = null;
-
-      k.final.team1 = winnersSF[0] || null;
-      k.final.team2 = winnersSF[1] || null;
-      if(k.final.winner && ![k.final.team1, k.final.team2].includes(k.final.winner)) k.final.winner = null;
-    }
-
     function dropdownOptions(selected){
       let html = "";
       for(let i=0; i<=10; i++){
@@ -652,7 +652,7 @@
                 <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="home">
                   ${dropdownOptions(m.homeScore)}
                 </select>
-                <div style="font-size:28px; color:#888;">-</div>
+                <span style="font-size:28px; color:#888;">-</span>
                 <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="away">
                   ${dropdownOptions(m.awayScore)}
                 </select>
@@ -763,8 +763,6 @@
           renderStandingsPanel();
         };
       });
-
-      // Group tabs already handled in renderGroupTabs
     }
 
     function init(){
