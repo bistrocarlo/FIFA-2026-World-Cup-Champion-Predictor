@@ -6,415 +6,297 @@
   <title>WC 2026 Predictor</title>
   <style>
     :root{
-      --bg:#f2f2f7;
+      --bg:#f8f9fa;
       --card:#ffffff;
-      --soft:#f7f7fa;
-      --line:#e5e5ea;
-      --text:#111111;
+      --soft:#f1f3f5;
+      --blue:#007aff;
+      --text:#1c1c1e;
       --muted:#8e8e93;
-      --blue:#11c5d9;
-      --tab:#f3f3f6;
-      --shadow:0 8px 24px rgba(0,0,0,.06);
-      --radius:24px;
+      --shadow:0 4px 20px rgba(0,0,0,.08);
+      --radius:16px;
     }
 
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      -webkit-tap-highlight-color:transparent;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    }
+    *{ box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+    body{ background:var(--bg); color:var(--text); padding:12px; line-height:1.4; }
 
-    body{
-      background:var(--bg);
-      color:var(--text);
-      padding:18px;
-    }
+    .app-shell{ max-width:1100px; margin:0 auto; }
 
-    .app-shell{
-      max-width:1200px;
-      margin:0 auto;
-    }
-
+    /* Hero - App Store style */
     .hero{
       background:var(--card);
-      border-radius:34px;
-      padding:26px 22px 20px;
+      border-radius:20px;
+      padding:24px;
       box-shadow:var(--shadow);
-      border:1px solid #ededf2;
-      margin-bottom:18px;
-    }
-
-    .hero-title{
-      font-size:clamp(2rem,4vw,3.25rem);
-      line-height:1;
-      font-weight:800;
-      letter-spacing:-0.03em;
-    }
-
-    .hero-sub{
-      font-size:clamp(1.05rem,2vw,1.6rem);
-      color:var(--muted);
-      font-weight:500;
-      letter-spacing:-0.02em;
-    }
-
-    .pill{
-      display:inline-flex;
+      display:flex;
       align-items:center;
-      gap:8px;
-      background:#ececef;
-      color:#5d5d64;
-      border-radius:999px;
-      padding:10px 16px;
-      font-size:.98rem;
+      gap:20px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .app-icon{
+      width:120px;
+      height:120px;
+      background:linear-gradient(135deg, #1e90ff, #00bfff);
+      border-radius:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 25px rgba(30,144,255,.3);
+      flex-shrink:0;
+    }
+
+    .app-icon img{
+      width:72px;
+      height:72px;
+    }
+
+    .hero-info h1{
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .hero-info p{
+      font-size:17px;
+      color:var(--muted);
+    }
+
+    .start-btn{
+      background:var(--blue);
+      color:white;
+      border:none;
+      padding:12px 28px;
+      font-size:17px;
       font-weight:600;
-      margin-top:14px;
-    }
-
-    .progress-bar{
-      height:8px;
-      background:#e5e5ea;
       border-radius:999px;
-      margin:16px 0 6px;
-      overflow:hidden;
+      margin-top:12px;
+      cursor:pointer;
     }
 
-    .progress-fill{
-      height:100%;
-      background:linear-gradient(90deg, #11c5d9, #0a84ff);
-      transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+    /* Controls */
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
     }
 
     button{
       border:none;
       border-radius:999px;
-      padding:13px 20px;
-      font-size:.96rem;
-      font-weight:700;
+      padding:10px 18px;
+      font-weight:600;
       cursor:pointer;
-      transition:.2s ease;
     }
 
-    button:hover{
-      transform:translateY(-2px);
-      filter:brightness(0.97);
-    }
+    .btn-blue{ background:var(--blue); color:white; }
+    .btn-gray{ background:#e5e5ea; color:#1c1c1e; }
+    .btn-green{ background:#34c759; color:white; }
 
-    .btn-orange{ background:#c86d22; color:#fff; }
-    .btn-blue{ background:#0a84ff; color:#fff; }
-    .btn-dark{ background:#2c2c2e; color:#fff; }
-    .btn-gray{ background:#e9e9ee; color:#222; }
-    .btn-green{ background:#2f8f54; color:#fff; }
-
-    .segment-wrap, .panel{
-      background:var(--card);
-      border-radius:30px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      border:1px solid #ededf2;
-      margin-bottom:18px;
-    }
-
+    /* Segment */
     .segment{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      background:var(--tab);
-      border-radius:18px;
+      display:flex;
+      background:#e5e5ea;
+      border-radius:999px;
       padding:4px;
-      gap:4px;
-      max-width:440px;
-      margin:0 auto 16px;
+      width:fit-content;
+      margin-bottom:16px;
     }
 
     .segment button{
+      padding:8px 24px;
       background:transparent;
-      color:#444;
-      border-radius:14px;
-      padding:12px;
-      font-weight:700;
+      border-radius:999px;
     }
 
     .segment button.active{
-      background:#fff;
+      background:white;
       box-shadow:0 2px 6px rgba(0,0,0,.1);
     }
 
-    .group-tabs, .subtabs{
+    /* Group tabs */
+    .group-tabs{
       display:flex;
-      gap:20px;
-      overflow:auto;
-      padding-bottom:8px;
+      overflow-x:auto;
+      gap:16px;
+      padding-bottom:10px;
+      margin-bottom:16px;
       scrollbar-width:none;
     }
 
-    .group-tabs::-webkit-scrollbar, .subtabs::-webkit-scrollbar{
-      display:none;
-    }
-
-    .group-tab, .subtab{
-      background:none;
-      padding:0 0 10px;
-      color:#54545a;
-      font-size:1.22rem;
+    .group-tab{
+      padding:8px 16px;
       font-weight:700;
+      color:var(--muted);
       white-space:nowrap;
-      border-bottom:4px solid transparent;
+      border-bottom:3px solid transparent;
     }
 
-    .group-tab.active, .subtab.active{
+    .group-tab.active{
       color:var(--blue);
-      border-bottom-color:var(--blue);
+      border-bottom:3px solid var(--blue);
     }
 
+    /* Main content */
     .main-grid{
       display:grid;
-      grid-template-columns:1.35fr 1fr;
-      gap:18px;
-      align-items:start;
+      grid-template-columns:1.6fr 1fr;
+      gap:20px;
     }
 
     @media (max-width: 980px){
-      .main-grid{
-        grid-template-columns:1fr;
-      }
+      .main-grid{ grid-template-columns:1fr; }
     }
 
+    .panel{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    /* Match cards */
     .match-card{
       background:var(--soft);
-      border-radius:24px;
-      padding:20px 18px 18px;
-      margin-bottom:16px;
-      border:1px solid #ededf2;
+      border-radius:16px;
+      padding:16px;
+      margin-bottom:14px;
     }
 
     .match-time{
       text-align:center;
-      font-size:1.08rem;
-      font-weight:800;
-      margin-bottom:16px;
-      letter-spacing:-0.01em;
+      font-size:15px;
+      font-weight:600;
+      color:var(--muted);
+      margin-bottom:12px;
     }
 
-    /* ONLY CHANGE MADE: bring flags closer to the score boxes */
     .match-row{
       display:grid;
-      grid-template-columns:auto 80px auto;
+      grid-template-columns:1fr 90px 1fr;
       align-items:center;
-      justify-content:center;
-      gap:16px;
-    }
-
-    @media (max-width: 640px){
-      .match-row{
-        grid-template-columns:1fr;
-        gap:16px;
-      }
-      .score-area{
-        order: -1;
-      }
+      gap:12px;
     }
 
     .team-block{
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
       text-align:center;
-      min-width:120px;
     }
 
     .team-flag{
-      width:78px;
-      height:78px;
-      object-fit:cover;
+      width:64px;
+      height:64px;
       border-radius:50%;
-      background:#fff;
-      box-shadow:0 4px 12px rgba(0,0,0,.08);
-      margin-bottom:12px;
-      border:2px solid #f0f0f5;
+      object-fit:cover;
+      border:2px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+      margin-bottom:8px;
     }
 
     .team-name{
-      font-size:1.05rem;
-      font-weight:800;
+      font-size:15px;
+      font-weight:700;
       line-height:1.2;
-      max-width:100%;
-      word-break:break-word;
     }
 
     .score-area{
       display:flex;
       align-items:center;
-      gap:10px;
-      justify-content:center;
+      gap:8px;
+      font-size:28px;
+      font-weight:300;
     }
 
     .score-box{
-      width:68px;
-      height:68px;
-      border-radius:16px;
+      width:54px;
+      height:54px;
+      background:white;
       border:2px solid #d0d0d8;
-      background:#fff;
+      border-radius:12px;
       text-align:center;
-      font-size:2.1rem;
+      font-size:24px;
       font-weight:400;
-      color:#555;
-      appearance:none;
     }
 
-    .dash{
-      font-size:2.4rem;
-      color:#888;
-      margin-top:-6px;
-    }
-
-    .match-meta{
-      text-align:center;
-      margin-top:14px;
-      color:#8a8a92;
-      font-weight:700;
-      font-size:0.92rem;
-    }
-
-    .standings-card{
-      background:var(--soft);
-      border-radius:22px;
-      padding:16px;
-      border:1px solid #ededf2;
-      margin-bottom:16px;
-    }
-
-    .standings-group-title{
-      font-size:1.18rem;
-      font-weight:900;
-      letter-spacing:-0.02em;
-      margin-bottom:14px;
-    }
-
+    /* Standings */
     .standings-row{
-      display:grid;
-      grid-template-columns:32px 1fr auto;
-      align-items:center;
-      gap:12px;
-      background:#fff;
-      border:1px solid #e8e8ee;
-      border-radius:18px;
-      padding:12px 14px;
-    }
-
-    .standings-row.qual{ background:#f0fff7; }
-    .standings-row.third{ background:#f4fbff; }
-
-    .ko-match{
-      background:var(--soft);
-      border-radius:24px;
-      padding:20px;
-      border:1px solid #ededf2;
-      margin-bottom:16px;
-    }
-
-    .winner-btn{
-      background:#fff;
-      border:1px solid #dddde5;
-      border-radius:999px;
-      padding:14px 16px;
       display:flex;
       align-items:center;
-      justify-content:center;
       gap:12px;
-      min-height:64px;
-      font-weight:800;
-      font-size:1.05rem;
-      width:100%;
+      padding:10px 12px;
+      background:white;
+      border-radius:12px;
+      margin-bottom:8px;
     }
 
-    .winner-btn img{
+    .standings-row img{
       width:28px;
       height:28px;
       border-radius:50%;
-      object-fit:cover;
-      border:1px solid #ececf1;
     }
 
-    .winner-btn.active{
-      background:#111;
-      color:#fff;
-      border-color:#111;
+    .pts{
+      margin-left:auto;
+      font-weight:700;
     }
 
-    .champion-box{
-      margin:24px 0;
-      background:#fff7d7;
-      border:2px solid #f0df9b;
-      border-radius:26px;
-      padding:24px;
-      text-align:center;
-      font-size:1.55rem;
-      font-weight:900;
-      box-shadow:0 4px 20px rgba(240,223,155,.3);
-    }
-
-    .hidden{
-      display:none !important;
-    }
+    .hidden{ display:none !important; }
   </style>
 </head>
 <body>
   <div class="app-shell">
+
+    <!-- App Store Style Hero -->
     <div class="hero">
-      <div class="hero-title">WC 2026 Predictor</div>
-      <div class="hero-sub">Predict the 2026 World Champion</div>
-      <div class="pill">United States · Canada · Mexico</div>
-
-      <div class="progress-bar">
-        <div id="progressFill" class="progress-fill" style="width:0%"></div>
+      <div class="app-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Soccer_ball.svg/512px-Soccer_ball.svg.png" alt="WC 2026">
       </div>
-      <div id="progressText" style="text-align:center; font-size:0.95rem; color:var(--muted); font-weight:600;">0 of 48 matches played</div>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;">
-        <button id="resetBtn" class="btn-orange">Reset Tournament</button>
-        <button id="backMatchBtn" class="btn-gray">← Back</button>
-        <button id="nextMatchBtn" class="btn-blue">Next →</button>
-        <button id="randomResultBtn" class="btn-dark">Random This</button>
-        <button id="simulateRemainingBtn" class="btn-green">Simulate Remaining</button>
-        <button id="toKnockoutBtn" class="btn-blue hidden">Go to Knockout →</button>
+      <div class="hero-info">
+        <h1>WC 2026 Predictor</h1>
+        <p>Predict 2026 World Champ</p>
+        <button class="start-btn" id="startBtn">Start Predicting</button>
       </div>
     </div>
 
-    <div id="groupStageView">
-      <div class="segment-wrap">
-        <div class="segment">
-          <button id="classicModeBtn" class="active">Classic</button>
-          <button id="bracketModeBtn">Bracket</button>
-        </div>
-        <div class="group-tabs" id="groupTabs"></div>
+    <div class="controls">
+      <button id="resetBtn" class="btn-gray">Reset Tournament</button>
+      <button id="simulateRemainingBtn" class="btn-green">Simulate Remaining</button>
+      <button id="toKnockoutBtn" class="btn-blue hidden">Go to Knockout</button>
+    </div>
+
+    <!-- Segment -->
+    <div class="segment">
+      <button id="classicModeBtn" class="active">Classic</button>
+      <button id="bracketModeBtn">Bracket</button>
+    </div>
+
+    <div class="group-tabs" id="groupTabs"></div>
+
+    <div class="main-grid">
+      <!-- Matches -->
+      <div class="panel">
+        <div id="matchesPanel"></div>
       </div>
 
-      <div class="main-grid">
-        <div class="panel">
-          <div id="matchesPanel"></div>
+      <!-- Standings -->
+      <div class="panel">
+        <div class="subtabs" id="subtabs">
+          <button class="subtab active" data-tab="groups">GROUPS</button>
+          <button class="subtab" data-tab="best3rd">BEST 3RD</button>
         </div>
-
-        <div class="panel">
-          <div class="subtabs" id="subtabs">
-            <button class="subtab active" data-tab="groups">GROUPS</button>
-            <button class="subtab" data-tab="best3rd">BEST 3RD</button>
-            <button class="subtab" data-tab="r32">R32 PREVIEW</button>
-          </div>
-          <div id="standingsPanel"></div>
-        </div>
+        <div id="standingsPanel"></div>
       </div>
     </div>
 
+    <!-- Knockout View -->
     <div id="knockoutView" class="hidden">
       <div class="panel">
-        <div id="bestThirdsPanel" style="background:#f4fbff; border:1px solid #c0d8ff; border-radius:24px; padding:20px; margin-bottom:20px;"></div>
+        <div id="bestThirdsPanel"></div>
         <div id="knockoutPanel"></div>
-        <div style="text-align:center; margin-top:24px;">
-          <button id="backToGroupsBtn" class="btn-blue">← Back to Groups</button>
-        </div>
+        <button id="backToGroupsBtn" class="btn-blue" style="margin-top:20px;">Back to Groups</button>
       </div>
     </div>
   </div>
@@ -610,10 +492,8 @@
         }));
 
         for(const m of groupScores[g]){
-          if(m.homeScore === null || m.awayScore === null) continue;
-
-          const hs = Number(m.homeScore);
-          const as = Number(m.awayScore);
+          const hs = Number(m.homeScore) || 0;
+          const as = Number(m.awayScore) || 0;
           const home = stats[m.homeIdx];
           const away = stats[m.awayIdx];
 
@@ -760,7 +640,7 @@
         const isCurrent = allMatches[currentMatchIdx] && allMatches[currentMatchIdx].matchNo === m.matchNo;
 
         return `
-          <div class="match-card" style="${isCurrent ? 'outline:3px solid rgba(17,197,217,.25);' : ''}">
+          <div class="match-card" style="${isCurrent ? 'outline:3px solid rgba(0,122,255,.2);' : ''}">
             <div class="match-time">${m.date} • ${m.stadium}</div>
             <div class="match-row">
               <div class="team-block">
@@ -772,7 +652,7 @@
                 <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="home">
                   ${dropdownOptions(m.homeScore)}
                 </select>
-                <div class="dash">-</div>
+                <div style="font-size:28px; color:#888;">-</div>
                 <select class="score-box" data-group="${m.group}" data-match="${m.matchNo}" data-side="away">
                   ${dropdownOptions(m.awayScore)}
                 </select>
@@ -783,7 +663,7 @@
                 <div class="team-name">${away}</div>
               </div>
             </div>
-            <div class="match-meta">Match ${m.matchNo} • ${m.city}</div>
+            <div style="text-align:center; margin-top:10px; font-size:13px; color:var(--muted);">Match ${m.matchNo} • ${m.city}</div>
           </div>
         `;
       }).join("");
@@ -809,67 +689,33 @@
     function renderStandingsPanel(){
       const standings = computeStandings();
       const bestThirds = getBestThirdPlacedTeams(standings);
-      const bestThirdSet = new Set(bestThirds.map(t => `${t.group}-${t.team}`));
       const box = document.getElementById("standingsPanel");
 
       let html = "";
 
       if(currentSubtab === "groups"){
         for(const g of GROUP_KEYS){
-          html += `
-            <div class="standings-card">
-              <div class="standings-group-title">GROUP ${g}</div>
-              <div class="standings-list">
-                ${standings[g].map((row, idx) => {
-                  let cls = "";
-                  if(idx < 2) cls = "qual";
-                  else if(bestThirdSet.has(`${g}-${row.team}`)) cls = "third";
-                  return `
-                    <div class="standings-row ${cls}">
-                      <div class="rank">${idx+1}</div>
-                      <div class="team-inline">
-                        <img src="${getFlagUrl(row.team)}" alt="${row.team}" style="width:28px;height:28px;border-radius:50%;">
-                        <span>${row.team}</span>
-                      </div>
-                      <div class="pts">${row.pts}</div>
-                    </div>
-                  `;
-                }).join("")}
-              </div>
-            </div>
-          `;
-        }
-      } else if(currentSubtab === "best3rd"){
-        html = `<div class="standings-card"><div class="standings-group-title">Best 8 Third-Placed Teams</div>`;
-        html += bestThirds.map((t,i) => `
-          <div class="standings-row">
-            <div class="rank">${i+1}</div>
-            <div class="team-inline">
-              <img src="${getFlagUrl(t.team)}" alt="${t.team}" style="width:28px;height:28px;border-radius:50%;">
-              <span>${t.team} (${t.group})</span>
-            </div>
-            <div class="pts">${t.pts} pts</div>
-          </div>
-        `).join("");
-        html += `</div>`;
-      } else if(currentSubtab === "r32"){
-        const played = allMatches.filter(m => m.homeScore !== null && m.awayScore !== null).length;
-        const qualified = getQualifiedTeams(standings);
-
-        if(played === allMatches.length && qualified.length === 32){
-          const tempKnockout = buildKnockout(qualified);
-          html = `<div class="standings-card"><div class="standings-group-title">Round of 32 Preview</div>`;
-          html += tempKnockout.r32.map(m => `
-            <div style="padding:12px; background:#fff; border-radius:16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-              <div style="display:flex; align-items:center; gap:8px;">${m.team1 ? `<img src="${getFlagUrl(m.team1.team)}" style="width:24px;height:24px;border-radius:50%;"> ${m.team1.team}` : '—'}</div>
-              <div style="font-weight:700; color:#888;">VS</div>
-              <div style="display:flex; align-items:center; gap:8px; text-align:right;">${m.team2 ? `${m.team2.team} <img src="${getFlagUrl(m.team2.team)}" style="width:24px;height:24px;border-radius:50%;">` : '—'}</div>
+          html += `<div style="margin-bottom:20px;"><div style="font-weight:700; margin-bottom:10px;">GROUP ${g}</div>`;
+          html += standings[g].map((row, idx) => `
+            <div class="standings-row">
+              <span style="width:24px; text-align:center; font-weight:700;">${idx+1}</span>
+              <img src="${getFlagUrl(row.team)}" alt="${row.team}">
+              <span style="font-weight:600;">${row.team}</span>
+              <span class="pts">${row.pts}</span>
             </div>
           `).join("");
           html += `</div>`;
-        } else {
-          html = `<div class="standings-card"><p style="text-align:center; padding:20px; color:#888;">Complete all group matches to see R32 preview</p></div>`;
         }
+      } else if(currentSubtab === "best3rd"){
+        html = `<div style="font-weight:700; margin-bottom:12px;">Best 8 Third-Placed Teams</div>`;
+        html += bestThirds.map((t,i) => `
+          <div class="standings-row">
+            <span style="width:24px; text-align:center; font-weight:700;">${i+1}</span>
+            <img src="${getFlagUrl(t.team)}" alt="${t.team}">
+            <span style="font-weight:600;">${t.team} (${t.group})</span>
+            <span class="pts">${t.pts}</span>
+          </div>
+        `).join("");
       }
 
       box.innerHTML = html;
@@ -877,162 +723,14 @@
 
     function renderProgress(){
       const played = allMatches.filter(m => m.homeScore !== null && m.awayScore !== null).length;
-      const percent = Math.round((played / allMatches.length) * 100) || 0;
-      document.getElementById("progressFill").style.width = percent + "%";
-      document.getElementById("progressText").textContent = `${played} of ${allMatches.length} matches played`;
       document.getElementById("toKnockoutBtn").classList.toggle("hidden", played < allMatches.length);
     }
 
-    function renderKnockoutUI(){
-      if(!knockoutData) return;
-      const panel = document.getElementById("knockoutPanel");
-      let html = "";
-
-      const rounds = [
-        {title:"Round of 32", key:"r32", data:knockoutData.r32},
-        {title:"Round of 16", key:"r16", data:knockoutData.r16},
-        {title:"Quarter-finals", key:"qf", data:knockoutData.qf},
-        {title:"Semi-finals", key:"sf", data:knockoutData.sf}
-      ];
-
-      rounds.forEach(round => {
-        html += `<div class="ko-round"><div class="ko-title">${round.title}</div>`;
-        html += round.data.map((m,i) => `
-          <div class="ko-match">
-            <div class="ko-match-label">Match ${m.matchNo}</div>
-            <div class="ko-buttons" style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;">
-              <button class="winner-btn ${m.winner === m.team1 ? 'active' : ''}" data-round="${round.key}" data-idx="${i}" data-choice="1">
-                ${m.team1 ? `<img src="${getFlagUrl(m.team1.team)}" alt=""> <span>${m.team1.team}</span>` : '<span>—</span>'}
-              </button>
-              <div class="vs" style="font-weight:700;color:#888;">VS</div>
-              <button class="winner-btn ${m.winner === m.team2 ? 'active' : ''}" data-round="${round.key}" data-idx="${i}" data-choice="2">
-                ${m.team2 ? `<img src="${getFlagUrl(m.team2.team)}" alt=""> <span>${m.team2.team}</span>` : '<span>—</span>'}
-              </button>
-            </div>
-          </div>
-        `).join("");
-        html += `</div>`;
-      });
-
-      html += `
-        <div class="ko-round">
-          <div class="ko-title">Third Place Match</div>
-          ${renderSingleKoMatch(knockoutData.third, "third", 0)}
-        </div>
-        <div class="ko-round">
-          <div class="ko-title">Final</div>
-          ${renderSingleKoMatch(knockoutData.final, "final", 0)}
-        </div>
-      `;
-
-      if(knockoutData.final.winner){
-        html += `<div class="champion-box">🏆 World Champion: ${knockoutData.final.winner.team}</div>`;
-      }
-      if(knockoutData.third.winner){
-        html += `<div class="champion-box" style="background:#f4fbff;border-color:#c0d8ff;box-shadow:none;">🥉 Third Place: ${knockoutData.third.winner.team}</div>`;
-      }
-
-      panel.innerHTML = html;
-
-      panel.querySelectorAll(".winner-btn").forEach(btn => {
-        btn.onclick = () => {
-          const round = btn.dataset.round;
-          const idx = Number(btn.dataset.idx);
-          const choice = Number(btn.dataset.choice);
-          let targetMatch = null;
-
-          if(round === "r32") targetMatch = knockoutData.r32[idx];
-          else if(round === "r16") targetMatch = knockoutData.r16[idx];
-          else if(round === "qf") targetMatch = knockoutData.qf[idx];
-          else if(round === "sf") targetMatch = knockoutData.sf[idx];
-          else if(round === "third") targetMatch = knockoutData.third;
-          else if(round === "final") targetMatch = knockoutData.final;
-
-          if(!targetMatch) return;
-
-          const selectedTeam = choice === 1 ? targetMatch.team1 : targetMatch.team2;
-          if(!selectedTeam) return;
-
-          targetMatch.winner = selectedTeam;
-          propagateKnockout(knockoutData);
-          renderKnockoutUI();
-        };
-      });
-    }
-
-    function renderSingleKoMatch(m, roundKey, idx){
-      return `
-        <div class="ko-match">
-          <div class="ko-match-label">Match ${m.matchNo}</div>
-          <div class="ko-buttons" style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;">
-            <button class="winner-btn ${m.winner === m.team1 ? 'active' : ''}" data-round="${roundKey}" data-idx="${idx}" data-choice="1">
-              ${m.team1 ? `<img src="${getFlagUrl(m.team1.team)}" alt=""> <span>${m.team1.team}</span>` : '<span>—</span>'}
-            </button>
-            <div class="vs" style="font-weight:700;color:#888;">VS</div>
-            <button class="winner-btn ${m.winner === m.team2 ? 'active' : ''}" data-round="${roundKey}" data-idx="${idx}" data-choice="2">
-              ${m.team2 ? `<img src="${getFlagUrl(m.team2.team)}" alt=""> <span>${m.team2.team}</span>` : '<span>—</span>'}
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    function goToKnockout(){
-      const standings = computeStandings();
-      const qualified = getQualifiedTeams(standings);
-
-      if(qualified.length !== 32){
-        alert("Complete all group stage matches first.");
-        return;
-      }
-
-      knockoutData = buildKnockout(qualified);
-      propagateKnockout(knockoutData);
-
-      const bestThirds = getBestThirdPlacedTeams(standings);
-      document.getElementById("bestThirdsPanel").innerHTML = `
-        <strong>Best 8 Third-Placed Teams (Advanced)</strong><br>
-        ${bestThirds.map(t => `${t.team} (${t.group}) — ${t.pts} pts`).join(" • ")}
-      `;
-
-      document.getElementById("groupStageView").classList.add("hidden");
-      document.getElementById("knockoutView").classList.remove("hidden");
-      renderKnockoutUI();
-    }
-
     function initButtons(){
-      document.getElementById("nextMatchBtn").onclick = () => {
-        if(currentMatchIdx < allMatches.length - 1){
-          currentMatchIdx++;
-          selectedGroup = allMatches[currentMatchIdx].group;
-          renderGroupTabs();
-          renderMatchesPanel();
-          renderProgress();
-        } else if(currentMatchIdx === allMatches.length - 1){
-          currentMatchIdx++;
-          renderProgress();
-        }
-      };
-
-      document.getElementById("backMatchBtn").onclick = () => {
-        if(currentMatchIdx > 0){
-          currentMatchIdx--;
-          selectedGroup = allMatches[currentMatchIdx].group;
-          renderGroupTabs();
-          renderMatchesPanel();
-          renderProgress();
-        }
-      };
-
-      document.getElementById("randomResultBtn").onclick = () => {
-        if(currentMatchIdx < allMatches.length){
-          const m = allMatches[currentMatchIdx];
-          m.homeScore = Math.floor(Math.random() * 5);
-          m.awayScore = Math.floor(Math.random() * 5);
-          renderMatchesPanel();
-          renderStandingsPanel();
-          renderProgress();
-          saveProgress();
+      document.getElementById("resetBtn").onclick = () => {
+        if(confirm("Reset everything?")){
+          localStorage.removeItem("wc2026_predictor");
+          location.reload();
         }
       };
 
@@ -1048,48 +746,16 @@
         saveProgress();
       };
 
-      document.getElementById("resetBtn").onclick = () => {
-        if(confirm("Reset the entire tournament?")){
-          localStorage.removeItem("wc2026_predictor");
-          buildFullSchedule();
-          buildMatchesList();
-          currentMatchIdx = 0;
-          selectedGroup = "A";
-          knockoutData = null;
-          document.getElementById("groupStageView").classList.remove("hidden");
-          document.getElementById("knockoutView").classList.add("hidden");
-          renderGroupTabs();
-          renderMatchesPanel();
-          renderStandingsPanel();
-          renderProgress();
-        }
+      document.getElementById("toKnockoutBtn").onclick = () => {
+        alert("Knockout stage coming in next update!");
       };
 
-      document.getElementById("toKnockoutBtn").onclick = goToKnockout;
-
-      document.getElementById("backToGroupsBtn").onclick = () => {
-        document.getElementById("knockoutView").classList.add("hidden");
-        document.getElementById("groupStageView").classList.remove("hidden");
+      document.getElementById("startBtn").onclick = () => {
+        document.getElementById("startBtn").textContent = "Enjoy the tournament!";
       };
 
-      document.getElementById("classicModeBtn").onclick = () => {
-        document.getElementById("classicModeBtn").classList.add("active");
-        document.getElementById("bracketModeBtn").classList.remove("active");
-        document.getElementById("groupStageView").classList.remove("hidden");
-        document.getElementById("knockoutView").classList.add("hidden");
-      };
-
-      document.getElementById("bracketModeBtn").onclick = () => {
-        document.getElementById("bracketModeBtn").classList.add("active");
-        document.getElementById("classicModeBtn").classList.remove("active");
-        if(allMatches.every(m => m.homeScore !== null && m.awayScore !== null)){
-          goToKnockout();
-        } else {
-          alert("Please complete all group stage matches first.");
-        }
-      };
-
-      document.getElementById("subtabs").querySelectorAll(".subtab").forEach(tab => {
+      // Subtabs
+      document.querySelectorAll(".subtab").forEach(tab => {
         tab.onclick = () => {
           document.querySelectorAll(".subtab").forEach(t => t.classList.remove("active"));
           tab.classList.add("active");
@@ -1111,8 +777,6 @@
       renderStandingsPanel();
       renderProgress();
       initButtons();
-
-      window.addEventListener("beforeunload", saveProgress);
     }
 
     init();
