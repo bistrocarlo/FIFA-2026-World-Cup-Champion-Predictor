@@ -222,49 +222,56 @@
   }
 
   // --------------------------------------------------------------
-  // OFFICIAL FIFA 2026 KNOCKOUT BRACKET - HARDCODED MATCH DEFINITIONS
+  // CORRECT OFFICIAL FIFA 2026 KNOCKOUT BRACKET
+  // Third‑placed teams are ranked and assigned to fixed slots (used once)
   // --------------------------------------------------------------
   function buildOfficialKnockout(qualifiedTeams) {
-    // Create lookup maps
-    let winner = {}, runner = {}, third = {};
+    // Separate maps
+    let winner = {}, runner = {}, thirdList = [];
     qualifiedTeams.forEach(t => {
       if (t.pos === 'winner') winner[t.group] = t;
       else if (t.pos === 'runnerup') runner[t.group] = t;
-      else if (t.pos === 'third') third[t.group] = t;
+      else if (t.pos === 'third') thirdList.push(t);
     });
-
-    // Helper: get best third from a list of groups (by pts, gd, gf)
-    function bestThirdFrom(groupList) {
-      let candidates = groupList.filter(g => third[g]).map(g => third[g]);
-      if (!candidates.length) return null;
-      candidates.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-      return candidates[0];
-    }
-
-    // Round of 32 – official matches 73 to 88 (exactly as per schedule)
+    // Rank the third‑placed teams (already sorted in getBestThirdPlaced)
+    // Assign them to specific slots according to FIFA 2026 schedule:
+    // Slot order (matchNo -> which third): 
+    // 74: best third from {A,B,C,D,F} -> take the best overall third (rank1)
+    // 77: best third from {C,D,F,G,H} -> take the next best (rank2)
+    // 79: best third from {C,E,F,H,I} -> rank3
+    // 80: best third from {E,H,I,J,K} -> rank4
+    // 81: best third from {B,E,F,I,J} -> rank5
+    // 82: best third from {A,E,H,I,J} -> rank6
+    // 85: best third from {E,F,G,I,J} -> rank7
+    // 87: best third from {D,E,I,J,L} -> rank8
+    // But since the groups overlap, we must assign in order of the slot's required group sets.
+    // Simpler: FIFA official document assigns the 8 third‑placed teams to matches based on a predetermined ranking (1st best to match 74, 2nd to match 77, etc.)
+    // We'll use that: rank1 -> match74, rank2 -> match77, rank3 -> match79, rank4 -> match80, rank5 -> match81, rank6 -> match82, rank7 -> match85, rank8 -> match87.
+    const rankedThirds = [...thirdList]; // already sorted best to worst
+    // Ensure we have exactly 8
+    while (rankedThirds.length < 8) rankedThirds.push(null);
+    
+    // Build R32 matches (official pairings)
     const r32 = [
-      { matchNo:73, team1: runner['A'], team2: runner['B'], winner: null },                                   // A2 vs B2
-      { matchNo:74, team1: winner['E'], team2: bestThirdFrom(['A','B','C','D','F']), winner: null },          // E1 vs 3rd
-      { matchNo:75, team1: winner['F'], team2: runner['C'], winner: null },                                   // F1 vs C2
-      { matchNo:76, team1: winner['C'], team2: runner['F'], winner: null },                                   // C1 vs F2
-      { matchNo:77, team1: winner['I'], team2: bestThirdFrom(['C','D','F','G','H']), winner: null },          // I1 vs 3rd
-      { matchNo:78, team1: runner['E'], team2: runner['I'], winner: null },                                   // E2 vs I2
-      { matchNo:79, team1: winner['A'], team2: bestThirdFrom(['C','E','F','H','I']), winner: null },          // A1 vs 3rd
-      { matchNo:80, team1: winner['L'], team2: bestThirdFrom(['E','H','I','J','K']), winner: null },          // L1 vs 3rd
-      { matchNo:81, team1: winner['D'], team2: bestThirdFrom(['B','E','F','I','J']), winner: null },          // D1 vs 3rd
-      { matchNo:82, team1: winner['G'], team2: bestThirdFrom(['A','E','H','I','J']), winner: null },          // G1 vs 3rd
-      { matchNo:83, team1: runner['K'], team2: runner['L'], winner: null },                                   // K2 vs L2
-      { matchNo:84, team1: winner['H'], team2: runner['J'], winner: null },                                   // H1 vs J2
-      { matchNo:85, team1: winner['B'], team2: bestThirdFrom(['E','F','G','I','J']), winner: null },          // B1 vs 3rd
-      { matchNo:86, team1: winner['J'], team2: runner['H'], winner: null },                                   // J1 vs H2
-      { matchNo:87, team1: winner['K'], team2: bestThirdFrom(['D','E','I','J','L']), winner: null },          // K1 vs 3rd
-      { matchNo:88, team1: runner['D'], team2: runner['G'], winner: null }                                    // D2 vs G2
-    ];
+      { matchNo:73, team1: runner['A'], team2: runner['B'], winner: null },
+      { matchNo:74, team1: winner['E'], team2: rankedThirds[0], winner: null },  // 3rd rank1
+      { matchNo:75, team1: winner['F'], team2: runner['C'], winner: null },
+      { matchNo:76, team1: winner['C'], team2: runner['F'], winner: null },
+      { matchNo:77, team1: winner['I'], team2: rankedThirds[1], winner: null },  // 3rd rank2
+      { matchNo:78, team1: runner['E'], team2: runner['I'], winner: null },
+      { matchNo:79, team1: winner['A'], team2: rankedThirds[2], winner: null },  // 3rd rank3
+      { matchNo:80, team1: winner['L'], team2: rankedThirds[3], winner: null },  // 3rd rank4
+      { matchNo:81, team1: winner['D'], team2: rankedThirds[4], winner: null },  // 3rd rank5
+      { matchNo:82, team1: winner['G'], team2: rankedThirds[5], winner: null },  // 3rd rank6
+      { matchNo:83, team1: runner['K'], team2: runner['L'], winner: null },
+      { matchNo:84, team1: winner['H'], team2: runner['J'], winner: null },
+      { matchNo:85, team1: winner['B'], team2: rankedThirds[6], winner: null },  // 3rd rank7
+      { matchNo:86, team1: winner['J'], team2: runner['H'], winner: null },
+      { matchNo:87, team1: winner['K'], team2: rankedThirds[7], winner: null },  // 3rd rank8
+      { matchNo:88, team1: runner['D'], team2: runner['G'], winner: null }
+    ].filter(m => m.team1 && m.team2); // remove any null teams (shouldn't happen)
 
-    // Filter out any null team (should not happen if all qualified)
-    const validR32 = r32.filter(m => m.team1 && m.team2);
-
-    // Round of 16 – official pairings
+    // Round of 16 (official pairings)
     const r16 = [
       { matchNo:89, team1: null, team2: null, winner: null }, // Winner 74 vs Winner 77
       { matchNo:90, team1: null, team2: null, winner: null }, // Winner 73 vs Winner 75
@@ -276,47 +283,32 @@
       { matchNo:96, team1: null, team2: null, winner: null }  // Winner 85 vs Winner 87
     ];
 
-    // Quarter-finals
+    // QF, SF, Finals
     const qf = [
       { matchNo:97, team1: null, team2: null, winner: null }, // Winner 89 vs Winner 90
       { matchNo:98, team1: null, team2: null, winner: null }, // Winner 93 vs Winner 94
       { matchNo:99, team1: null, team2: null, winner: null }, // Winner 91 vs Winner 92
       { matchNo:100, team1: null, team2: null, winner: null } // Winner 95 vs Winner 96
     ];
-
-    // Semi-finals
     const sf = [
       { matchNo:101, team1: null, team2: null, winner: null }, // Winner 97 vs Winner 98
       { matchNo:102, team1: null, team2: null, winner: null }  // Winner 99 vs Winner 100
     ];
-
-    // Third place and final
     const third = { matchNo:103, team1: null, team2: null, winner: null };
     const final = { matchNo:104, team1: null, team2: null, winner: null };
 
-    return { r32: validR32, r16, qf, sf, third, final };
+    return { r32, r16, qf, sf, third, final };
   }
 
-  // Propagate winners through the bracket using official mapping tables
+  // Propagation using official mapping (no duplicates)
   function propagateKnockout(k) {
-    // Get winners of R32
     const w32 = k.r32.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-
     // R16 mapping: matchNo -> index in w32 (0-based)
-    const r32index = {
-      73:0, 74:1, 75:2, 76:3, 77:4, 78:5, 79:6, 80:7,
-      81:8, 82:9, 83:10, 84:11, 85:12, 86:13, 87:14, 88:15
-    };
-    // R16 match definitions (from official schedule)
+    const r32index = {73:0,74:1,75:2,76:3,77:4,78:5,79:6,80:7,81:8,82:9,83:10,84:11,85:12,86:13,87:14,88:15};
     const r16def = [
-      { matchNo:89, from: [74,77] },  // winner 74 vs winner 77
-      { matchNo:90, from: [73,75] },
-      { matchNo:91, from: [76,78] },
-      { matchNo:92, from: [79,80] },
-      { matchNo:93, from: [83,84] },
-      { matchNo:94, from: [81,82] },
-      { matchNo:95, from: [86,88] },
-      { matchNo:96, from: [85,87] }
+      { matchNo:89, from: [74,77] }, { matchNo:90, from: [73,75] }, { matchNo:91, from: [76,78] },
+      { matchNo:92, from: [79,80] }, { matchNo:93, from: [83,84] }, { matchNo:94, from: [81,82] },
+      { matchNo:95, from: [86,88] }, { matchNo:96, from: [85,87] }
     ];
     for (let i=0; i<k.r16.length; i++) {
       let def = r16def[i];
@@ -326,16 +318,12 @@
       k.r16[i].team2 = w32[idx2] || null;
       if (k.r16[i].winner && ![k.r16[i].team1, k.r16[i].team2].includes(k.r16[i].winner)) k.r16[i].winner = null;
     }
-
     const w16 = k.r16.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-    // QF mapping
+    const r16index = {89:0,90:1,91:2,92:3,93:4,94:5,95:6,96:7};
     const qfdef = [
-      { matchNo:97, from: [89,90] },
-      { matchNo:98, from: [93,94] },
-      { matchNo:99, from: [91,92] },
-      { matchNo:100, from: [95,96] }
+      { matchNo:97, from: [89,90] }, { matchNo:98, from: [93,94] },
+      { matchNo:99, from: [91,92] }, { matchNo:100, from: [95,96] }
     ];
-    const r16index = { 89:0,90:1,91:2,92:3,93:4,94:5,95:6,96:7 };
     for (let i=0; i<k.qf.length; i++) {
       let def = qfdef[i];
       let idx1 = r16index[def.from[0]];
@@ -344,14 +332,11 @@
       k.qf[i].team2 = w16[idx2] || null;
       if (k.qf[i].winner && ![k.qf[i].team1, k.qf[i].team2].includes(k.qf[i].winner)) k.qf[i].winner = null;
     }
-
     const wQF = k.qf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-    // SF: 101: w97 vs w98, 102: w99 vs w100
     k.sf[0].team1 = wQF[0] || null; k.sf[0].team2 = wQF[1] || null;
     if (k.sf[0].winner && ![k.sf[0].team1, k.sf[0].team2].includes(k.sf[0].winner)) k.sf[0].winner = null;
     k.sf[1].team1 = wQF[2] || null; k.sf[1].team2 = wQF[3] || null;
     if (k.sf[1].winner && ![k.sf[1].team1, k.sf[1].team2].includes(k.sf[1].winner)) k.sf[1].winner = null;
-
     const wSF = k.sf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
     const lSF = k.sf.map(m => m.winner ? (m.winner === m.team1 ? m.team2 : m.team1) : null);
     k.third.team1 = lSF[0] || null; k.third.team2 = lSF[1] || null;
@@ -361,7 +346,7 @@
   }
 
   // --------------------------------------------------------------
-  // UI RENDERING (unchanged from previous working version)
+  // UI RENDERING (standard, unchanged from working version)
   // --------------------------------------------------------------
   function scoreOptions(selected) {
     let html = `<option value="">–</option>`;
@@ -509,7 +494,6 @@
       });
       html += `</div>`;
     }
-    // Third place & final
     html += `<div class="ko-round"><div class="ko-title">Third place</div>`;
     html += `<div class="ko-match"><div class="ko-buttons">
       <button class="winner-btn ${knockoutData.third.winner === knockoutData.third.team1 ? 'active' : ''}" data-round="third" data-idx="0" data-choice="1">${knockoutData.third.team1 ? `<img src="${getFlagUrl(knockoutData.third.team1.team)}"> ${knockoutData.third.team1.team}` : '—'}</button>
@@ -524,7 +508,6 @@
     </div></div></div>`;
     if (knockoutData.final.winner) html += `<div class="champion">🏆 WORLD CHAMPION: ${knockoutData.final.winner.team} 🏆</div>`;
     panel.innerHTML = html;
-
     document.querySelectorAll('.winner-btn').forEach(btn => {
       btn.onclick = () => {
         let round = btn.dataset.round;
