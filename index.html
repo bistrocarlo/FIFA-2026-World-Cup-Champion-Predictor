@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>WC 2026 Predictor – Official FIFA Bracket</title>
+  <title>WC 2026 Predictor – Official Bracket</title>
   <style>
     * {
       box-sizing: border-box;
@@ -268,7 +268,7 @@
 <div class="container">
   <div class="header">
     <h1>⚽ WC 2026 Predictor</h1>
-    <div class="sub">Official FIFA 2026 bracket · USA · Canada · Mexico</div>
+    <div class="sub">Official FIFA 2026 Bracket · USA · Canada · Mexico</div>
     <div class="hosts">🇺🇸 🇨🇦 🇲🇽 12 groups · 32 teams knockout</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-text" id="progressText">0 / 72 matches</div>
@@ -307,9 +307,9 @@
 </div>
 
 <script>
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   // GROUPS & TEAMS (12 groups, 4 teams each)
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   const GROUPS = {
     A: ["Mexico","South Africa","South Korea","Czechia"],
     B: ["Canada","Bosnia and Herzegovina","Qatar","Switzerland"],
@@ -326,7 +326,7 @@
   };
   const GROUP_KEYS = Object.keys(GROUPS);
 
-  // Flag mapping (country code -> flagcdn)
+  // Flag mapping
   const flagMap = {
     "Mexico":"mx","South Africa":"za","South Korea":"kr","Czechia":"cz","Canada":"ca",
     "Bosnia and Herzegovina":"ba","Qatar":"qa","Switzerland":"ch","Brazil":"br","Morocco":"ma",
@@ -344,9 +344,9 @@
     return `https://flagcdn.com/w80/${code}.png`;
   }
 
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   // FULL GROUP SCHEDULE (72 matches)
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   const scheduleData = {
     A: [{matchNo:1,date:"JUN 11, 3:00 PM",city:"Mexico City",stadium:"Azteca",homeIdx:0,awayIdx:1},{matchNo:2,date:"JUN 11, 10:00 PM",city:"Guadalajara",stadium:"Akron",homeIdx:2,awayIdx:3},{matchNo:25,date:"JUN 18, 12:00 PM",city:"Atlanta",stadium:"Mercedes-Benz",homeIdx:3,awayIdx:1},{matchNo:28,date:"JUN 18, 9:00 PM",city:"Guadalajara",stadium:"Akron",homeIdx:0,awayIdx:2},{matchNo:53,date:"JUN 24, 7:00 PM",city:"Mexico City",stadium:"Azteca",homeIdx:3,awayIdx:0},{matchNo:54,date:"JUN 24, 7:00 PM",city:"Monterrey",stadium:"BBVA",homeIdx:1,awayIdx:2}],
     B: [{matchNo:3,date:"JUN 12, 3:00 PM",city:"Toronto",stadium:"BMO",homeIdx:0,awayIdx:1},{matchNo:8,date:"JUN 13, 10:00 PM",city:"Santa Clara",stadium:"Levi's",homeIdx:2,awayIdx:3},{matchNo:26,date:"JUN 18, 3:00 PM",city:"Los Angeles",stadium:"SoFi",homeIdx:3,awayIdx:1},{matchNo:27,date:"JUN 18, 6:00 PM",city:"Vancouver",stadium:"BC Place",homeIdx:0,awayIdx:2},{matchNo:51,date:"JUN 24, 4:00 PM",city:"Vancouver",stadium:"BC Place",homeIdx:3,awayIdx:0},{matchNo:52,date:"JUN 24, 4:00 PM",city:"Seattle",stadium:"Lumen",homeIdx:1,awayIdx:2}],
@@ -362,10 +362,10 @@
     L: [{matchNo:22,date:"JUN 17, 5:00 PM",city:"Toronto",stadium:"BMO",homeIdx:2,awayIdx:3},{matchNo:24,date:"JUN 17, 10:00 PM",city:"Dallas",stadium:"AT&T",homeIdx:0,awayIdx:1},{matchNo:45,date:"JUN 23, 10:00 PM",city:"Boston",stadium:"Gillette",homeIdx:0,awayIdx:2},{matchNo:46,date:"JUN 23, 10:00 PM",city:"Toronto",stadium:"BMO",homeIdx:3,awayIdx:1},{matchNo:67,date:"JUN 27, 1:00 PM",city:"New York",stadium:"MetLife",homeIdx:3,awayIdx:0},{matchNo:68,date:"JUN 27, 1:00 PM",city:"Philadelphia",stadium:"Lincoln Financial",homeIdx:1,awayIdx:2}]
   };
 
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   // STATE
-  // --------------------------------------------------------------
-  let groupScores = {};      // { group: [ match objects with homeScore, awayScore ] }
+  // ------------------------------------------------------------------
+  let groupScores = {};
   let allMatches = [];
   let currentGroup = "A";
   let knockoutData = null;
@@ -387,7 +387,6 @@
     knockoutData = null;
   }
 
-  // Compute standings
   function computeStandings() {
     let standings = {};
     for (let g of GROUP_KEYS) {
@@ -431,11 +430,10 @@
   }
 
   // ------------------------------------------------------------------
-  // OFFICIAL FIFA 2026 KNOCKOUT BRACKET (EXACT PAIRINGS)
-  // Based on the published FIFA World Cup 2026 match schedule
+  // OFFICIAL FIFA 2026 KNOCKOUT BRACKET (exact pairings)
+  // Matches 73-88 as provided, then R16, QF, SF, Final.
   // ------------------------------------------------------------------
   function buildOfficialKnockout(qualifiedTeams) {
-    // Maps
     let winnerMap = {}, runnerMap = {}, thirdMap = {};
     qualifiedTeams.forEach(t => {
       if (t.pos === 'winner') winnerMap[t.group] = t;
@@ -443,7 +441,7 @@
       else if (t.pos === 'third') thirdMap[t.group] = t;
     });
 
-    // Helper: get best third from a list of groups (by points, GD, GF)
+    // Helper: best third from a set of groups
     function bestThirdFrom(groups) {
       let candidates = groups.filter(g => thirdMap[g]).map(g => thirdMap[g]);
       if (!candidates.length) return null;
@@ -451,55 +449,88 @@
       return candidates[0];
     }
 
-    // R32 matches according to FIFA 2026 official schedule
+    // Round of 32 – official matches 73 to 88
     const r32 = [
-      { matchNo:73, team1: winnerMap['A'], team2: bestThirdFrom(['C','D','E']), winner: null },
-      { matchNo:74, team1: winnerMap['B'], team2: bestThirdFrom(['A','D','E','F']), winner: null },
-      { matchNo:75, team1: winnerMap['C'], team2: bestThirdFrom(['A','B','F']), winner: null },
-      { matchNo:76, team1: winnerMap['D'], team2: bestThirdFrom(['B','E','F']), winner: null },
-      { matchNo:77, team1: winnerMap['E'], team2: bestThirdFrom(['A','B','C','D']), winner: null },
-      { matchNo:78, team1: winnerMap['F'], team2: bestThirdFrom(['A','B','C']), winner: null },
-      { matchNo:79, team1: winnerMap['G'], team2: bestThirdFrom(['H','I','J','K','L']), winner: null },
-      { matchNo:80, team1: winnerMap['H'], team2: bestThirdFrom(['G','I','J','K','L']), winner: null },
-      { matchNo:81, team1: winnerMap['I'], team2: runnerMap['J'], winner: null },
-      { matchNo:82, team1: winnerMap['J'], team2: runnerMap['I'], winner: null },
-      { matchNo:83, team1: winnerMap['K'], team2: runnerMap['L'], winner: null },
-      { matchNo:84, team1: winnerMap['L'], team2: runnerMap['K'], winner: null },
-      { matchNo:85, team1: runnerMap['A'], team2: runnerMap['B'], winner: null },
-      { matchNo:86, team1: runnerMap['C'], team2: runnerMap['D'], winner: null },
-      { matchNo:87, team1: runnerMap['E'], team2: runnerMap['F'], winner: null },
-      { matchNo:88, team1: runnerMap['G'], team2: runnerMap['H'], winner: null }
-    ].filter(m => m.team1 && m.team2); // safety filter
+      { matchNo:73, team1: runnerMap['A'], team2: runnerMap['B'], winner: null },                    // A2 vs B2
+      { matchNo:74, team1: winnerMap['E'], team2: bestThirdFrom(['A','B','C','D','F']), winner: null }, // E1 vs 3rd
+      { matchNo:75, team1: winnerMap['F'], team2: runnerMap['C'], winner: null },                    // F1 vs C2
+      { matchNo:76, team1: winnerMap['C'], team2: runnerMap['F'], winner: null },                    // C1 vs F2
+      { matchNo:77, team1: winnerMap['I'], team2: bestThirdFrom(['C','D','F','G','H']), winner: null }, // I1 vs 3rd
+      { matchNo:78, team1: runnerMap['E'], team2: runnerMap['I'], winner: null },                    // E2 vs I2
+      { matchNo:79, team1: winnerMap['A'], team2: bestThirdFrom(['C','E','F','H','I']), winner: null }, // A1 vs 3rd
+      { matchNo:80, team1: winnerMap['L'], team2: bestThirdFrom(['E','H','I','J','K']), winner: null }, // L1 vs 3rd
+      { matchNo:81, team1: winnerMap['D'], team2: bestThirdFrom(['B','E','F','I','J']), winner: null }, // D1 vs 3rd
+      { matchNo:82, team1: winnerMap['G'], team2: bestThirdFrom(['A','E','H','I','J']), winner: null }, // G1 vs 3rd
+      { matchNo:83, team1: runnerMap['K'], team2: runnerMap['L'], winner: null },                    // K2 vs L2
+      { matchNo:84, team1: winnerMap['H'], team2: runnerMap['J'], winner: null },                    // H1 vs J2
+      { matchNo:85, team1: winnerMap['B'], team2: bestThirdFrom(['E','F','G','I','J']), winner: null }, // B1 vs 3rd
+      { matchNo:86, team1: winnerMap['J'], team2: runnerMap['H'], winner: null },                    // J1 vs H2
+      { matchNo:87, team1: winnerMap['K'], team2: bestThirdFrom(['D','E','I','J','L']), winner: null }, // K1 vs 3rd
+      { matchNo:88, team1: runnerMap['D'], team2: runnerMap['G'], winner: null }                     // D2 vs G2
+    ].filter(m => m.team1 && m.team2);
 
-    // Later rounds (will be filled by propagation)
-    const r16 = Array.from({length:8}, (_,i) => ({ matchNo:89+i, team1:null, team2:null, winner:null }));
-    const qf = Array.from({length:4}, (_,i) => ({ matchNo:97+i, team1:null, team2:null, winner:null }));
-    const sf = Array.from({length:2}, (_,i) => ({ matchNo:101+i, team1:null, team2:null, winner:null }));
-    const third = { matchNo:103, team1:null, team2:null, winner:null };
-    const final = { matchNo:104, team1:null, team2:null, winner:null };
+    // Round of 16 – official pairings
+    const r16 = [
+      { matchNo:89, team1: null, team2: null, winner: null }, // Winner 74 vs Winner 77
+      { matchNo:90, team1: null, team2: null, winner: null }, // Winner 73 vs Winner 75
+      { matchNo:91, team1: null, team2: null, winner: null }, // Winner 76 vs Winner 78
+      { matchNo:92, team1: null, team2: null, winner: null }, // Winner 79 vs Winner 80
+      { matchNo:93, team1: null, team2: null, winner: null }, // Winner 83 vs Winner 84
+      { matchNo:94, team1: null, team2: null, winner: null }, // Winner 81 vs Winner 82
+      { matchNo:95, team1: null, team2: null, winner: null }, // Winner 86 vs Winner 88
+      { matchNo:96, team1: null, team2: null, winner: null }  // Winner 85 vs Winner 87
+    ];
+
+    // Quarter-finals
+    const qf = [
+      { matchNo:97, team1: null, team2: null, winner: null }, // Winner 89 vs Winner 90
+      { matchNo:98, team1: null, team2: null, winner: null }, // Winner 93 vs Winner 94
+      { matchNo:99, team1: null, team2: null, winner: null }, // Winner 91 vs Winner 92
+      { matchNo:100, team1: null, team2: null, winner: null } // Winner 95 vs Winner 96
+    ];
+
+    // Semi-finals
+    const sf = [
+      { matchNo:101, team1: null, team2: null, winner: null }, // Winner 97 vs Winner 98
+      { matchNo:102, team1: null, team2: null, winner: null }  // Winner 99 vs Winner 100
+    ];
+
+    // Third place and final
+    const third = { matchNo:103, team1: null, team2: null, winner: null };
+    const final = { matchNo:104, team1: null, team2: null, winner: null };
+
     return { r32, r16, qf, sf, third, final };
   }
 
   function propagateKnockout(k) {
     // R32 winners
     const w32 = k.r32.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
+    // R16 pairings: 89: w74 vs w77, 90: w73 vs w75, 91: w76 vs w78, 92: w79 vs w80,
+    // 93: w83 vs w84, 94: w81 vs w82, 95: w86 vs w88, 96: w85 vs w87
+    const r16mapping = [[74,77],[73,75],[76,78],[79,80],[83,84],[81,82],[86,88],[85,87]];
     for (let i=0; i<k.r16.length; i++) {
-      k.r16[i].team1 = w32[i*2] || null;
-      k.r16[i].team2 = w32[i*2+1] || null;
+      let idx1 = r16mapping[i][0] - 73;
+      let idx2 = r16mapping[i][1] - 73;
+      k.r16[i].team1 = w32[idx1] || null;
+      k.r16[i].team2 = w32[idx2] || null;
       if (k.r16[i].winner && ![k.r16[i].team1, k.r16[i].team2].includes(k.r16[i].winner)) k.r16[i].winner = null;
     }
     const w16 = k.r16.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
+    // QF: 97: w89 vs w90, 98: w93 vs w94, 99: w91 vs w92, 100: w95 vs w96
+    const qfmapping = [[89,90],[93,94],[91,92],[95,96]];
     for (let i=0; i<k.qf.length; i++) {
-      k.qf[i].team1 = w16[i*2] || null;
-      k.qf[i].team2 = w16[i*2+1] || null;
+      let idx1 = qfmapping[i][0] - 89;
+      let idx2 = qfmapping[i][1] - 89;
+      k.qf[i].team1 = w16[idx1] || null;
+      k.qf[i].team2 = w16[idx2] || null;
       if (k.qf[i].winner && ![k.qf[i].team1, k.qf[i].team2].includes(k.qf[i].winner)) k.qf[i].winner = null;
     }
     const wQF = k.qf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
-    for (let i=0; i<k.sf.length; i++) {
-      k.sf[i].team1 = wQF[i*2] || null;
-      k.sf[i].team2 = wQF[i*2+1] || null;
-      if (k.sf[i].winner && ![k.sf[i].team1, k.sf[i].team2].includes(k.sf[i].winner)) k.sf[i].winner = null;
-    }
+    // SF: 101: w97 vs w98, 102: w99 vs w100
+    k.sf[0].team1 = wQF[0] || null; k.sf[0].team2 = wQF[1] || null;
+    if (k.sf[0].winner && ![k.sf[0].team1, k.sf[0].team2].includes(k.sf[0].winner)) k.sf[0].winner = null;
+    k.sf[1].team1 = wQF[2] || null; k.sf[1].team2 = wQF[3] || null;
+    if (k.sf[1].winner && ![k.sf[1].team1, k.sf[1].team2].includes(k.sf[1].winner)) k.sf[1].winner = null;
     const wSF = k.sf.map(m => m.winner === m.team1 ? m.team1 : m.winner === m.team2 ? m.team2 : null);
     const lSF = k.sf.map(m => m.winner ? (m.winner === m.team1 ? m.team2 : m.team1) : null);
     k.third.team1 = lSF[0] || null; k.third.team2 = lSF[1] || null;
@@ -508,9 +539,9 @@
     if (k.final.winner && ![k.final.team1, k.final.team2].includes(k.final.winner)) k.final.winner = null;
   }
 
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   // UI RENDERING
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------
   function scoreOptions(selected) {
     let html = `<option value="">–</option>`;
     for (let i=0; i<=10; i++) html += `<option value="${i}" ${selected===i ? 'selected' : ''}>${i}</option>`;
@@ -554,7 +585,6 @@
       `;
     }
     document.getElementById('matchesPanel').innerHTML = html;
-    // attach change events
     document.querySelectorAll('.score-box').forEach(sel => {
       sel.addEventListener('change', (e) => {
         let group = sel.dataset.group;
@@ -568,7 +598,7 @@
         }
         renderStandings();
         updateProgress();
-        renderMatches();  // re-render to keep selects in sync
+        renderMatches();
         saveToLocal();
       });
     });
@@ -613,7 +643,9 @@
       let tmpBracket = buildOfficialKnockout(qualified);
       let html = `<div class="group-title">🔮 Round of 32 (official pairings)</div>`;
       tmpBracket.r32.forEach(m => {
-        html += `<div class="standings-row" style="justify-content:space-between;"><span><img src="${getFlagUrl(m.team1.team)}" width="22"> ${m.team1.team}</span> <span>vs</span> <span>${m.team2.team} <img src="${getFlagUrl(m.team2.team)}" width="22"></span></div>`;
+        if (m.team1 && m.team2) {
+          html += `<div class="standings-row" style="justify-content:space-between;"><span><img src="${getFlagUrl(m.team1.team)}" width="22"> ${m.team1.team}</span> <span>vs</span> <span>${m.team2.team} <img src="${getFlagUrl(m.team2.team)}" width="22"></span></div>`;
+        }
       });
       container.innerHTML = html;
     }
@@ -640,6 +672,7 @@
     for (let r of rounds) {
       html += `<div class="ko-round"><div class="ko-title">${r.name}</div>`;
       knockoutData[r.key].forEach((match, idx) => {
+        if (!match.team1 && !match.team2) return;
         html += `<div class="ko-match">
           <div class="ko-match-label">Match ${match.matchNo}</div>
           <div class="ko-buttons">
@@ -671,7 +704,6 @@
     if (knockoutData.final.winner) html += `<div class="champion">🏆 WORLD CHAMPION: ${knockoutData.final.winner.team} 🏆</div>`;
     panel.innerHTML = html;
 
-    // attach knockout click handlers
     document.querySelectorAll('.winner-btn').forEach(btn => {
       btn.onclick = () => {
         let round = btn.dataset.round;
@@ -783,7 +815,6 @@
       document.getElementById('groupStageView').classList.remove('hidden');
       renderStandings();
     };
-    // sub tabs
     document.querySelectorAll('.sub-tab').forEach(tab => {
       tab.onclick = () => {
         document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
