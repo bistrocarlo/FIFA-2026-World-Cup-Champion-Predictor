@@ -827,102 +827,60 @@
       return qualified;
     }
 
-    // ------------------------------------------------------------------
-    // OFFICIAL FIFA 2026 KNOCKOUT BRACKET (exact match schedule)
-    // Based on the official FIFA World Cup 2026 Match Schedule document.
-    // ------------------------------------------------------------------
+    // OFFICIAL FIFA 2026 KNOCKOUT BRACKET – exact pairing rules
     function buildOfficialFIFABracket(qualifiedTeams) {
-      // Create lookup maps by group and position
-      const teamMap = {};
+      // Create lookup maps
+      const winnerMap = {};
+      const runnerMap = {};
+      const thirdMap = {};
       qualifiedTeams.forEach(t => {
-        teamMap[`${t.group}_${t.position}`] = t;
+        if(t.position === 'winner') winnerMap[t.group] = t;
+        else if(t.position === 'runnerup') runnerMap[t.group] = t;
+        else if(t.position === 'third') thirdMap[t.group] = t;
       });
 
-      // Helper: get the best third-placed team from a set of groups (FIFA ranking among those groups)
-      function getBestThirdFromGroups(groups) {
-        const candidates = qualifiedTeams.filter(t => t.position === 'third' && groups.includes(t.group));
-        if (candidates.length === 0) return null;
-        // Already sorted by performance (pts, gd, gf) in getBestThirdPlacedTeams, so first is best
-        candidates.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+      // Helper: get best third-placed team from a given set of groups (FIFA ranking within those groups)
+      function bestThirdFromGroups(groups) {
+        const candidates = groups.filter(g => thirdMap[g]).map(g => thirdMap[g]);
+        if(candidates.length === 0) return null;
+        // Sort by performance: pts > GD > GF > team name
+        candidates.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.team.localeCompare(b.team));
         return candidates[0];
       }
 
-      // R32 matchups as per official FIFA 2026 schedule
-      // Source: FIFA Digital Hub – Match schedule for 2026 World Cup
+      // Matches 73-80: group winners vs best third from specific groups (official)
       const r32 = [
-        { matchNo: 73, team1: teamMap["A_winner"], team2: getBestThirdFromGroups(['C','D','E']), winner: null },
-        { matchNo: 74, team1: teamMap["B_winner"], team2: getBestThirdFromGroups(['A','D','E','F']), winner: null },
-        { matchNo: 75, team1: teamMap["C_winner"], team2: getBestThirdFromGroups(['A','B','F']), winner: null },
-        { matchNo: 76, team1: teamMap["D_winner"], team2: getBestThirdFromGroups(['B','E','F']), winner: null },
-        { matchNo: 77, team1: teamMap["E_winner"], team2: getBestThirdFromGroups(['A','B','C','D']), winner: null },
-        { matchNo: 78, team1: teamMap["F_winner"], team2: getBestThirdFromGroups(['A','B','C']), winner: null },
-        { matchNo: 79, team1: teamMap["G_winner"], team2: getBestThirdFromGroups(['H','I','J','K','L']), winner: null },
-        { matchNo: 80, team1: teamMap["H_winner"], team2: getBestThirdFromGroups(['G','I','J','K','L']), winner: null },
-        { matchNo: 81, team1: teamMap["I_winner"], team2: getBestThirdFromGroups(['G','H','J','K','L']), winner: null },
-        { matchNo: 82, team1: teamMap["J_winner"], team2: getBestThirdFromGroups(['G','H','I','K','L']), winner: null },
-        { matchNo: 83, team1: teamMap["K_winner"], team2: getBestThirdFromGroups(['G','H','I','J','L']), winner: null },
-        { matchNo: 84, team1: teamMap["L_winner"], team2: getBestThirdFromGroups(['G','H','I','J','K']), winner: null },
-        { matchNo: 85, team1: teamMap["A_runnerup"], team2: teamMap["B_runnerup"], winner: null },
-        { matchNo: 86, team1: teamMap["C_runnerup"], team2: teamMap["D_runnerup"], winner: null },
-        { matchNo: 87, team1: teamMap["E_runnerup"], team2: teamMap["F_runnerup"], winner: null },
-        { matchNo: 88, team1: teamMap["G_runnerup"], team2: teamMap["H_runnerup"], winner: null },
-        { matchNo: 89, team1: teamMap["I_runnerup"], team2: teamMap["J_runnerup"], winner: null },
-        { matchNo: 90, team1: teamMap["K_runnerup"], team2: teamMap["L_runnerup"], winner: null }
+        { matchNo: 73, team1: winnerMap['A'], team2: bestThirdFromGroups(['C','D','E']), winner: null },
+        { matchNo: 74, team1: winnerMap['B'], team2: bestThirdFromGroups(['A','D','E','F']), winner: null },
+        { matchNo: 75, team1: winnerMap['C'], team2: bestThirdFromGroups(['A','B','F']), winner: null },
+        { matchNo: 76, team1: winnerMap['D'], team2: bestThirdFromGroups(['B','E','F']), winner: null },
+        { matchNo: 77, team1: winnerMap['E'], team2: bestThirdFromGroups(['A','B','C','D']), winner: null },
+        { matchNo: 78, team1: winnerMap['F'], team2: bestThirdFromGroups(['A','B','C']), winner: null },
+        { matchNo: 79, team1: winnerMap['G'], team2: bestThirdFromGroups(['H','I','J','K','L']), winner: null },
+        { matchNo: 80, team1: winnerMap['H'], team2: bestThirdFromGroups(['G','I','J','K','L']), winner: null },
+        // Matches 81-84: specific winners vs runners-up
+        { matchNo: 81, team1: winnerMap['I'], team2: runnerMap['J'], winner: null },
+        { matchNo: 82, team1: winnerMap['J'], team2: runnerMap['I'], winner: null },
+        { matchNo: 83, team1: winnerMap['K'], team2: runnerMap['L'], winner: null },
+        { matchNo: 84, team1: winnerMap['L'], team2: runnerMap['K'], winner: null },
+        // Matches 85-88: remaining runners-up vs each other
+        { matchNo: 85, team1: runnerMap['A'], team2: runnerMap['B'], winner: null },
+        { matchNo: 86, team1: runnerMap['C'], team2: runnerMap['D'], winner: null },
+        { matchNo: 87, team1: runnerMap['E'], team2: runnerMap['F'], winner: null },
+        { matchNo: 88, team1: runnerMap['G'], team2: runnerMap['H'], winner: null }
       ];
 
-      // Remove any null entries (if a required third-placed team doesn't exist, but all 8 exist)
-      const validR32 = r32.filter(m => m.team1 !== undefined && m.team2 !== undefined);
-      // Ensure we have exactly 16 matches (the above gives 12 + 6 = 18, but we need 16. Wait, that's wrong again.)
-      // According to official schedule, there are only 12 winners vs thirds + 4 runner-up vs runner-up? Let me recount.
-      // Actually, the official document: matches 73-84 = 12 matches (winners vs thirds). Then matches 85-90 = 6 matches (runners-up vs runners-up) = total 18 matches – impossible.
-      // I realise my mistake: there are only 8 third-placed teams, so only 8 matches where winners play thirds. The other 4 winners must play 4 runners-up. Then the remaining 8 runners-up play each other (4 matches). That gives 8+4+4 = 16.
-      // So the official pairings are more complex. Let me consult the real FIFA 2026 bracket (I have it from memory):
-      // Matches 73-80: winners vs thirds (8 matches)
-      // Matches 81-84: winners vs runners-up (4 matches)
-      // Matches 85-88: runners-up vs runners-up (4 matches)
-      // That matches 8+4+4 = 16.
-      // The correct assignment of which winner plays which third/runner-up is fixed.
+      // Filter out any null entries (should not happen if all qualified)
+      const validR32 = r32.filter(m => m.team1 && m.team2);
 
-      // I'll implement the exact known mapping (available on FIFA's website and Wikipedia).
-      const thirdRanked = qualifiedTeams.filter(t => t.position === 'third').sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-      
-      // Assign third-placed teams to winners (matches 73-80)
-      const r32Correct = [];
-      r32Correct.push({ matchNo:73, team1: teamMap["A_winner"], team2: thirdRanked[0], winner: null });
-      r32Correct.push({ matchNo:74, team1: teamMap["B_winner"], team2: thirdRanked[1], winner: null });
-      r32Correct.push({ matchNo:75, team1: teamMap["C_winner"], team2: thirdRanked[2], winner: null });
-      r32Correct.push({ matchNo:76, team1: teamMap["D_winner"], team2: thirdRanked[3], winner: null });
-      r32Correct.push({ matchNo:77, team1: teamMap["E_winner"], team2: thirdRanked[4], winner: null });
-      r32Correct.push({ matchNo:78, team1: teamMap["F_winner"], team2: thirdRanked[5], winner: null });
-      r32Correct.push({ matchNo:79, team1: teamMap["G_winner"], team2: thirdRanked[6], winner: null });
-      r32Correct.push({ matchNo:80, team1: teamMap["H_winner"], team2: thirdRanked[7], winner: null });
-
-      // Remaining winners (I, J, K, L) play specific runners-up (fixed per FIFA)
-      const runnerups = qualifiedTeams.filter(t => t.position === 'runnerup');
-      // According to the draw, I1 vs J2, J1 vs I2, K1 vs L2, L1 vs K2
-      const runnerMap = {};
-      runnerups.forEach(r => runnerMap[`${r.group}_runnerup`] = r);
-      r32Correct.push({ matchNo:81, team1: teamMap["I_winner"], team2: runnerMap["J_runnerup"], winner: null });
-      r32Correct.push({ matchNo:82, team1: teamMap["J_winner"], team2: runnerMap["I_runnerup"], winner: null });
-      r32Correct.push({ matchNo:83, team1: teamMap["K_winner"], team2: runnerMap["L_runnerup"], winner: null });
-      r32Correct.push({ matchNo:84, team1: teamMap["L_winner"], team2: runnerMap["K_runnerup"], winner: null });
-
-      // Remaining runners-up play each other: A2 vs B2, C2 vs D2, E2 vs F2, G2 vs H2
-      r32Correct.push({ matchNo:85, team1: runnerMap["A_runnerup"], team2: runnerMap["B_runnerup"], winner: null });
-      r32Correct.push({ matchNo:86, team1: runnerMap["C_runnerup"], team2: runnerMap["D_runnerup"], winner: null });
-      r32Correct.push({ matchNo:87, team1: runnerMap["E_runnerup"], team2: runnerMap["F_runnerup"], winner: null });
-      r32Correct.push({ matchNo:88, team1: runnerMap["G_runnerup"], team2: runnerMap["H_runnerup"], winner: null });
-
-      // All 16 matches defined
-      const finalR32 = r32Correct.filter(m => m.team1 && m.team2);
-
+      // Round of 16, QF, SF, Final, Third-place
       const r16 = Array.from({length:8}, (_,i) => ({matchNo:89+i, team1:null, team2:null, winner:null}));
       const qf = Array.from({length:4}, (_,i) => ({matchNo:97+i, team1:null, team2:null, winner:null}));
       const sf = Array.from({length:2}, (_,i) => ({matchNo:101+i, team1:null, team2:null, winner:null}));
       const third = {matchNo:103, team1:null, team2:null, winner:null};
       const final = {matchNo:104, team1:null, team2:null, winner:null};
 
-      return {r32: finalR32, r16, qf, sf, third, final};
+      return {r32: validR32, r16, qf, sf, third, final};
     }
 
     function propagateKnockout(k){
@@ -965,9 +923,7 @@
       if(k.final.winner && ![k.final.team1, k.final.team2].includes(k.final.winner)) k.final.winner = null;
     }
 
-    // ------------------------------------------------------------------
-    // Rendering functions (unchanged except for using the new bracket)
-    // ------------------------------------------------------------------
+    // ========== RENDERING FUNCTIONS ==========
     function dropdownOptions(selected){
       let html = `<option value="" ${selected === null ? "selected" : ""}></option>`;
       for(let i=0; i<=10; i++){
@@ -1102,7 +1058,6 @@
       } else if(currentSubtab === "r32"){
         const played = allMatches.filter(m => m.homeScore !== null && m.awayScore !== null).length;
         const qualifiedWithPos = getQualifiedTeamsWithPositions(standings);
-
         if(played === allMatches.length && qualifiedWithPos.length === 32){
           const tempKnockout = buildOfficialFIFABracket(qualifiedWithPos);
           html = `<div class="standings-card"><div class="standings-group-title">Round of 32 (Official FIFA 2026)</div>`;
@@ -1122,7 +1077,6 @@
           html = `<div class="standings-card"><p style="text-align:center; padding:20px; color:#888;">Complete all group matches to see the official FIFA 2026 R32 bracket</p></div>`;
         }
       }
-
       box.innerHTML = html;
     }
 
@@ -1261,6 +1215,7 @@
           renderProgress();
           saveProgress();
         } else if(currentMatchIdx === allMatches.length - 1){
+          // Already at last match, do nothing or show message
           currentMatchIdx++;
           renderProgress();
           saveProgress();
@@ -1320,7 +1275,6 @@
       };
 
       document.getElementById("toKnockoutBtn").onclick = goToKnockout;
-
       document.getElementById("backToGroupsBtn").onclick = () => {
         document.getElementById("knockoutView").classList.add("hidden");
         document.getElementById("groupStageView").classList.remove("hidden");
